@@ -20,7 +20,7 @@ class ShareState extends Equatable {
     this.facebookShareUrl = '',
     this.twitterShareUrl = '',
     this.isDownloadRequested = false,
-    this.isUploadRequested = false,
+    this.isUploadRequested = true,
     this.shareUrl = ShareUrl.none,
   });
 

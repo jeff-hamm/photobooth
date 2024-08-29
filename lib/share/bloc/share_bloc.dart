@@ -7,7 +7,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image_compositor/image_compositor.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
-import 'package:photos_repository/photos_repository.dart';
+import '../../common/photos_repository.dart';
 import '../../common/camera_image_blob.dart';
 part 'share_event.dart';
 part 'share_state.dart';

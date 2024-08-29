@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
-import 'package:photos_repository/photos_repository.dart';
+import '../common/photos_repository.dart';
 import '../config.dart' as config;
 
 class App extends StatelessWidget {

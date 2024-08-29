@@ -15,7 +15,7 @@ import 'package:io_photobooth/firebase_options.dart';
 import 'package:io_photobooth/landing/loading_indicator_io.dart'
     if (dart.library.html) 'landing/loading_indicator_web.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
-import 'package:photos_repository/photos_repository.dart';
+import 'common/butts_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,9 +31,7 @@ void main() async {
   final authenticationRepository = AuthenticationRepository(
     firebaseAuth: FirebaseAuth.instance,
   );
-  final photosRepository = PhotosRepository(
-    firebaseStorage: FirebaseStorage.instance,
-  );
+  final photosRepository = ButtsPhotosRepository();
 
   unawaited(
     authenticationRepository.signInAnonymously(),

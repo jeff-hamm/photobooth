@@ -10,3 +10,6 @@ const SideIconButtonSizeLandscape = 120.0;
 const SideIconButtonSizePortait = 90.0;
 const InitialCharacterScale = 0.5;
 const MinCharacterScale = 0.1;
+//final ShareUrl = Uri.https('infinitebutts.com','/api/butts/upload');;
+const ImageServer = "http://localhost:5023";
+final ShareUrl =  Uri.parse("$ImageServer/api/butts/upload");

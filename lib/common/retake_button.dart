@@ -136,12 +136,15 @@ class _RetakeButton extends StatelessWidget {
           onPressed: () async {
             final photoboothBloc = context.read<PhotoboothBloc>();
             final navigator = Navigator.of(context);
-            final confirmed = await showAppModal<bool>(
+            
+            final confirmed =
+              !isStickers || 
+               (await showAppModal<bool>(
               context: context,
-              landscapeChild: isStickers ? const _StickersRetakeConfirmationDialogContent() : const _ConfirmationDialogContent(),
-              portraitChild: isStickers ? const _StickersRetakeConfirmationBottomSheet() : const _ConfirmationBottomSheet(),
-            );
-            if (confirmed ?? false) {
+              landscapeChild: const _StickersRetakeConfirmationDialogContent(),
+              portraitChild: const _StickersRetakeConfirmationBottomSheet()) ?? false);
+
+            if (confirmed) {
               photoboothBloc.add(const PhotoClearAllTapped());
               unawaited(navigator.pushReplacement(PhotoboothPage.route()));
             }

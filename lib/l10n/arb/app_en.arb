@@ -56,7 +56,7 @@
     "@sharePageSuccessHeading": {
         "description": "Heading shown on the share page after successful share."
     },
-    "sharePageSuccessSubheading": "Thanks for using our Flutter web app! Your photo has been published at this unique URL",
+    "sharePageSuccessSubheading": "Your photo has been published at this unique URL and will be projected",
     "@sharePageSuccessSubheading": {
         "description": "Subheading shown on the share page after successful share."
     },
@@ -140,7 +140,7 @@
     "@shareErrorDialogSubheading": {
         "description": "Subheading shown on the share error dialog."
     },
-    "sharePageProgressOverlayHeading": "We're making your photo pixel perfect with Flutter! ",
+    "sharePageProgressOverlayHeading": "Sending...",
     "@sharePageProgressOverlayHeading": {
         "description": "Heading shown on the share page progress overlay."
     },
