@@ -89,7 +89,7 @@ void main() {
     test('counter is blue with value 3', () async {
       final timePainter = TimerPainter(animation: animation, countdown: 3);
       final blue = timePainter.calculateColor();
-      expect(blue, PhotoboothColors.blue);
+      expect(blue, PhotoboothColors.accent);
     });
 
     test('counter is orange with value 2', () async {

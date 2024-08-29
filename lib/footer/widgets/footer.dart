@@ -2,24 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:io_photobooth/footer/footer.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 
-class WhiteFooter extends StatelessWidget {
-  const WhiteFooter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Footer(textColor: PhotoboothColors.white);
-  }
-}
-
-class BlackFooter extends StatelessWidget {
-  const BlackFooter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Footer(textColor: PhotoboothColors.black);
-  }
-}
-
 class Footer extends StatelessWidget {
   const Footer({required this.textColor, super.key});
 

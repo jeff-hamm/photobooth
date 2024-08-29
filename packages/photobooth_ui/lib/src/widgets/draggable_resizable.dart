@@ -42,6 +42,8 @@ class DraggableResizable extends StatefulWidget {
     required this.child,
     required this.size,
     BoxConstraints? constraints,
+    this.position=Offset.zero,
+    this.angle = 0,
     this.onUpdate,
     this.onDelete,
     this.canTransform = false,
@@ -58,13 +60,15 @@ class DraggableResizable extends StatefulWidget {
 
   /// Delete callback
   final VoidCallback? onDelete;
-
+  
   /// Whether or not the asset can be dragged or resized.
   /// Defaults to false.
   final bool canTransform;
 
   /// The child's original size.
   final Size size;
+  final Offset position;
+  final double angle;
 
   /// The child's constraints.
   /// Defaults to [BoxConstraints.loose(Size.infinite)].
@@ -74,13 +78,14 @@ class DraggableResizable extends StatefulWidget {
   final PlatformHelper platformHelper;
 
   @override
-  State<DraggableResizable> createState() => _DraggableResizableState();
+  State<DraggableResizable> createState() => _DraggableResizableState(position: position,angle:angle);
 }
 
 class _DraggableResizableState extends State<DraggableResizable> {
+  _DraggableResizableState({this.position=Offset.zero,this.angle=0});
   late Size size;
   late BoxConstraints constraints;
-  late double angle;
+  double angle;
   late double angleDelta;
   late double baseAngle;
 
@@ -93,7 +98,6 @@ class _DraggableResizableState extends State<DraggableResizable> {
     super.initState();
     size = widget.size;
     constraints = const BoxConstraints.expand(width: 1, height: 1);
-    angle = 0;
     baseAngle = 0;
     angleDelta = 0;
   }
@@ -222,7 +226,7 @@ class _DraggableResizableState extends State<DraggableResizable> {
               border: Border.all(
                 width: 2,
                 color: widget.canTransform
-                    ? PhotoboothColors.blue
+                    ? PhotoboothColors.accent
                     : PhotoboothColors.transparent,
               ),
             ),
@@ -432,7 +436,7 @@ class _ResizePoint extends StatelessWidget {
           width: _cornerDiameter,
           height: _cornerDiameter,
           decoration: BoxDecoration(
-            border: Border.all(color: PhotoboothColors.blue, width: 2),
+            border: Border.all(color: PhotoboothColors.accent, width: 2),
             shape: BoxShape.circle,
           ),
           child: Container(
@@ -549,7 +553,7 @@ class _FloatingActionIcon extends StatelessWidget {
           child: Center(
             child: Icon(
               iconData,
-              color: PhotoboothColors.blue,
+              color: PhotoboothColors.accent,
             ),
           ),
         ),

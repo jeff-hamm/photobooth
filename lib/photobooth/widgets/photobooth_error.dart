@@ -6,31 +6,31 @@ import 'package:photobooth_ui/photobooth_ui.dart';
 class PhotoboothError extends StatelessWidget {
   const PhotoboothError({required this.error, super.key});
 
-  final CameraException error;
+  final String error;
 
   @override
   Widget build(BuildContext context) {
-    if (error is CameraNotAllowedException) {
-      return const _PhotoboothCameraAccessDeniedError(
-        key: Key('photoboothError_cameraAccessDenied'),
-      );
-    }
-
-    if (error is CameraNotFoundException) {
-      return const _PhotoboothCameraNotFoundError(
-        key: Key('photoboothError_cameraNotFound'),
-      );
-    }
-
-    if (error is CameraNotSupportedException) {
-      return const _PhotoboothCameraNotSupportedError(
-        key: Key('photoboothError_cameraNotSupported'),
-      );
-    }
-
+    switch (error) {
+        case 'CameraAccessDenied':
+          return const _PhotoboothCameraAccessDeniedError(
+            key: Key('photoboothError_cameraAccessDenied'),
+          );
+        case 'CameraAccessDeniedWithoutPrompt':
+          // iOS only
+          return const _PhotoboothCameraAccessDeniedError(
+            key: Key('photoboothError_cameraAccessDenied'),
+          );
+        case 'CameraAccessRestricted':
+          // iOS only
+          return const _PhotoboothCameraAccessDeniedError(
+            key: Key('photoboothError_cameraAccessDenied'),
+          );
+        default:
     return const _PhotoboothCameraUnknownError(
       key: Key('photoboothError_unknown'),
     );
+
+    }
   }
 }
 

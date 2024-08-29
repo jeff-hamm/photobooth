@@ -13,7 +13,7 @@ class ShareHeading extends StatelessWidget {
     return SelectableText(
       l10n.sharePageHeading,
       style: theme.textTheme.displayLarge?.copyWith(
-        color: PhotoboothColors.white,
+        color: PhotoboothColors.accent,
       ),
       textAlign: TextAlign.center,
     );
@@ -31,7 +31,7 @@ class ShareSuccessHeading extends StatelessWidget {
     return SelectableText(
       l10n.sharePageSuccessHeading,
       style: theme.textTheme.displayLarge?.copyWith(
-        color: PhotoboothColors.white,
+        color: PhotoboothColors.accent,
       ),
       textAlign: TextAlign.center,
     );
@@ -49,7 +49,7 @@ class ShareErrorHeading extends StatelessWidget {
     return SelectableText(
       l10n.sharePageErrorHeading,
       style: theme.textTheme.displayLarge?.copyWith(
-        color: PhotoboothColors.white,
+        color: PhotoboothColors.accent,
       ),
       textAlign: TextAlign.center,
     );

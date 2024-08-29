@@ -7,7 +7,7 @@ import 'package:io_photobooth/stickers/stickers.dart';
 import '../../helpers/helpers.dart';
 
 void main() {
-  const googleTabAssetPath = 'assets/icons/google_icon.png';
+  const customTabAssetPath = 'assets/icons/custom_icon.png';
   const hatsTabAssetPath = 'assets/icons/hats_icon.png';
   const eyewearTabAssetPath = 'assets/icons/eyewear_icon.png';
   const foodTabAssetPath = 'assets/icons/food_icon.png';
@@ -41,7 +41,7 @@ void main() {
             ),
           );
           final tabBar = tester.widget<TabBar>(find.byType(TabBar));
-          expect(tabBar.tabs[0].key, equals(Key('stickersTabs_googleTab')));
+          expect(tabBar.tabs[0].key, equals(Key('stickersTabs_customTab')));
         });
 
         testWidgets('has correct correct asset path', (tester) async {
@@ -54,9 +54,9 @@ void main() {
             ),
           );
           final tab = tester.widget<StickersTab>(
-            find.byKey(Key('stickersTabs_googleTab')),
+            find.byKey(Key('stickersTabs_customTab')),
           );
-          expect(tab.assetPath, equals(googleTabAssetPath));
+          expect(tab.assetPath, equals(customTabAssetPath));
         });
       });
 
@@ -192,7 +192,7 @@ void main() {
           final tabBar = tester.widget<TabBarView>(find.byType(TabBarView));
           expect(
             tabBar.children[0].key,
-            equals(Key('stickersTabs_googleTabBarView')),
+            equals(Key('stickersTabs_customTabBarView')),
           );
         });
 
@@ -207,7 +207,7 @@ void main() {
           );
 
           final tabBarView = tester.widget<StickersTabBarView>(
-            find.byKey(Key('stickersTabs_googleTabBarView')),
+            find.byKey(Key('stickersTabs_customTabBarView')),
           );
           expect(tabBarView.stickers, equals(Assets.googleProps));
         });
@@ -450,7 +450,7 @@ void main() {
     testWidgets('renders', (tester) async {
       await tester.pumpApp(
         Scaffold(
-          body: StickersTab(assetPath: googleTabAssetPath),
+          body: StickersTab(assetPath: customTabAssetPath),
         ),
       );
       expect(find.byType(StickersTab), findsOneWidget);
@@ -459,7 +459,7 @@ void main() {
     testWidgets('renders tab widget', (tester) async {
       await tester.pumpApp(
         Scaffold(
-          body: StickersTab(assetPath: googleTabAssetPath),
+          body: StickersTab(assetPath: customTabAssetPath),
         ),
       );
       expect(find.byType(Tab), findsOneWidget);
@@ -468,7 +468,7 @@ void main() {
     testWidgets('renders image widget', (tester) async {
       await tester.pumpApp(
         Scaffold(
-          body: StickersTab(assetPath: googleTabAssetPath),
+          body: StickersTab(assetPath: customTabAssetPath),
         ),
       );
       expect(find.byType(Image), findsOneWidget);

@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as querystring from 'querystring';
 import mustache from 'mustache';
 
-import { UPLOAD_PATH, ALLOWED_HOSTS } from '../config';
+import { UPLOAD_PATH, ALLOWED_HOSTS, SITE_NAME, SITE_DESC } from '../config';
 import footerTmpl from './templates/footer';
 import notFoundTmpl from './templates/notfound';
 import shareTmpl from './templates/share';
@@ -27,10 +27,9 @@ const BaseHTMLContext: Record<string, string | Record<string, string>> = {
     fixedPhotosRight: bucketPathForFile('public/table-photos-right.png'),
   },
   meta: {
-    title: 'Google I/O Photo Booth',
+    title: SITE_NAME,
     desc: (
-      'Take a photo in the I/O Photo Booth with your favorite Google Developer Mascots! ' +
-      'Built with Flutter & Firebase for Google I/O 2021.'
+      SITE_DESC
     ),
   },
   footer: footerTmpl,

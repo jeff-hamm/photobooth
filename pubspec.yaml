@@ -1,5 +1,5 @@
 name: io_photobooth
-description: I/O Photo Booth app.
+description: Photo Booth app.
 version: 1.0.0+1
 publish_to: none
 
@@ -13,8 +13,7 @@ dependencies:
   authentication_repository:
     path: packages/authentication_repository
   bloc: ^8.1.0
-  camera:
-    path: packages/camera/camera
+  camera: ^0.11.0+2
   cross_file: ^0.3.3+2
   equatable: ^2.0.5
   firebase_auth: ^4.2.9
@@ -60,7 +59,7 @@ flutter:
     - assets/backgrounds/
     - assets/images/
     - assets/icons/
-    - assets/props/google/
+    - assets/props/custom/
     - assets/props/hats/
     - assets/props/eyewear/
     - assets/props/food/

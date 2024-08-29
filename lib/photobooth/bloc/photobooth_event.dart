@@ -1,5 +1,6 @@
 part of 'photobooth_bloc.dart';
 
+
 abstract class PhotoboothEvent extends Equatable {
   const PhotoboothEvent();
 
@@ -8,10 +9,10 @@ abstract class PhotoboothEvent extends Equatable {
 }
 
 class PhotoCaptured extends PhotoboothEvent {
-  const PhotoCaptured({required this.aspectRatio, required this.image});
+  PhotoCaptured({required this.aspectRatio, required this.image});
 
   final double aspectRatio;
-  final CameraImage image;
+  final CameraImageBlob image;
 
   @override
   List<Object> get props => [aspectRatio, image];
@@ -69,4 +70,9 @@ class PhotoDeleteSelectedStickerTapped extends PhotoboothEvent {
 
 class PhotoTapped extends PhotoboothEvent {
   const PhotoTapped();
+}
+
+class OrientationChanged extends PhotoboothEvent {
+  const OrientationChanged({required this.orientation});
+  final Orientation orientation;
 }

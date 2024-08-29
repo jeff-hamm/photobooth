@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
+import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
 part 'photobooth_event.dart';
 part 'photobooth_state.dart';
@@ -35,9 +38,19 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     on<PhotoClearAllTapped>(_onPhotoClearAllTapped);
     on<PhotoDeleteSelectedStickerTapped>(_onPhotoDeleteSelectedStickerTapped);
     on<PhotoTapped>(_onPhotoTapped);
+    on<OrientationChanged>(_onOrientationChanged);
   }
 
   final UuidGetter uuid;
+  void _onOrientationChanged(OrientationChanged event, Emitter<PhotoboothState> emit) {
+    emit(
+      state.copyWith(
+        aspectRatio: event.orientation == Orientation.landscape
+            ? PhotoboothAspectRatio.landscape
+            : PhotoboothAspectRatio.portrait,
+      ),
+    );
+  }
 
   void _onPhotoCaptured(PhotoCaptured event, Emitter<PhotoboothState> emit) {
     emit(

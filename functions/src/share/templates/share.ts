@@ -35,12 +35,6 @@ export default `
       <div class="share-image">
         <img src="{{{shareImageUrl}}}">
       </div>
-      <div class="text">
-        <h1>Taken with I/O Photo Booth</h1>
-        <h2>Join the fun! Grab a photo with your favorite Google mascot 
-          at the I/O Photo Booth.</h2>
-        <a class="share-btn" href="/">Get started</a>
-      </div>
     </main>
     {{{footer}}}
   </body>

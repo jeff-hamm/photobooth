@@ -4,7 +4,7 @@ import 'package:photobooth_ui/photobooth_ui.dart';
 class AnimatedDash extends AnimatedSprite {
   const AnimatedDash({super.key})
       : super(
-          loadingIndicatorColor: PhotoboothColors.blue,
+          loadingIndicatorColor: PhotoboothColors.accent,
           sprites: const Sprites(
             asset: 'dash_spritesheet.png',
             size: Size(650, 587),

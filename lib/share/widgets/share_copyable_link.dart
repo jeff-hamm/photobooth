@@ -125,7 +125,7 @@ class _CopyButton extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
         minimumSize: _copyButtonsMinimumSize,
-        backgroundColor: MaterialStateProperty.all(PhotoboothColors.blue),
+        backgroundColor: MaterialStateProperty.all(PhotoboothColors.accent),
         shape: _copyButtonsShape,
       ),
       onPressed: onPressed,

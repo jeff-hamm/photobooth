@@ -118,10 +118,8 @@ class DesktopButtonsLayout extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: DownloadButton(file: file)),
-        const SizedBox(width: 36),
-        Flexible(child: ShareButton(image: image)),
-        const SizedBox(width: 36),
-        const GoToGoogleIOButton(),
+        // const SizedBox(width: 36),
+        // Flexible(child: ShareButton(image: image)),
       ],
     );
   }
@@ -147,31 +145,7 @@ class MobileButtonsLayout extends StatelessWidget {
         const SizedBox(height: 20),
         ShareButton(image: image),
         const SizedBox(height: 20),
-        const GoToGoogleIOButton(),
       ],
-    );
-  }
-}
-
-@visibleForTesting
-class GoToGoogleIOButton extends StatelessWidget {
-  const GoToGoogleIOButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: PhotoboothColors.white,
-      ),
-      onPressed: launchGoogleIOLink,
-      child: Text(
-        l10n.goToGoogleIOButtonText,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: PhotoboothColors.black,
-        ),
-      ),
     );
   }
 }
@@ -186,6 +160,15 @@ class DownloadButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: PhotoboothColors.accent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        side: const BorderSide(color: PhotoboothColors.accent, width: 2),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        minimumSize: const Size(208, 54),
+      ),
       onPressed: () {
         trackEvent(
           category: 'button',

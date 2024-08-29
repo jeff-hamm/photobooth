@@ -1,0 +1,12 @@
+import 'package:camera/camera.dart';
+export './params.dart';
+const CameraResolution=ResolutionPreset.max;
+const CameraImageFormat=ImageFormatGroup.jpeg;
+const CountdownDuration=Duration(seconds: 0);
+const TimeoutDuration=Duration(seconds: 360);
+const ShareDuration=Duration(hours: 1);
+const NumRandomProps=4;
+const SideIconButtonSizeLandscape = 120.0;
+const SideIconButtonSizePortait = 90.0;
+const InitialCharacterScale = 0.5;
+const MinCharacterScale = 0.1;

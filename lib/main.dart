@@ -48,6 +48,9 @@ void main() async {
       Flame.images.load('photo_frame_spritesheet_landscape.jpg'),
       Flame.images.load('photo_frame_spritesheet_portrait.png'),
       Flame.images.load('photo_indicator_spritesheet.png'),
+      Flame.images.load('train_smooch.jpg'),
+      Flame.images.load('train_smooch2.jpg'),
+
     ]),
   );
 

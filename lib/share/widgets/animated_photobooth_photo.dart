@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 
@@ -12,7 +13,7 @@ class AnimatedPhotoboothPhoto extends StatefulWidget {
     super.key,
   });
 
-  final CameraImage? image;
+  final CameraImageBlob? image;
 
   @override
   State<AnimatedPhotoboothPhoto> createState() =>
@@ -68,7 +69,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     super.key,
   });
 
-  final CameraImage? image;
+  final CameraImageBlob? image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -151,7 +152,7 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
     super.key,
   });
 
-  final CameraImage? image;
+  final CameraImageBlob? image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -181,7 +182,7 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
       left: left,
       right: right,
       bottom: bottom,
-      scale: 0.4,
+      scale: 0.8,
     );
     final largePhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
@@ -192,7 +193,7 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
       left: left,
       right: right,
       bottom: bottom,
-      scale: 0.8,
+      scale: 1.6,
     );
     return ResponsiveLayoutBuilder(
       small: (context, _) => smallPhoto,
@@ -217,7 +218,7 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
   final AnimatedSprite sprite;
   final bool isPhotoVisible;
   final double aspectRatio;
-  final CameraImage? image;
+  final CameraImageBlob? image;
   final double top;
   final double left;
   final double right;

@@ -53,10 +53,6 @@ class _StickersTabsState extends State<StickersTabs>
           controller: _tabController,
           tabs: const [
             StickersTab(
-              key: Key('stickersTabs_googleTab'),
-              assetPath: 'assets/icons/google_icon.png',
-            ),
-            StickersTab(
               key: Key('stickersTabs_hatsTab'),
               assetPath: 'assets/icons/hats_icon.png',
             ),
@@ -72,6 +68,10 @@ class _StickersTabsState extends State<StickersTabs>
               key: Key('stickersTabs_shapesTab'),
               assetPath: 'assets/icons/shapes_icon.png',
             ),
+            StickersTab(
+              key: Key('stickersTabs_customTab'),
+              assetPath: 'assets/icons/custom_icon.png',
+            ),
           ],
         ),
         const Divider(),
@@ -79,11 +79,6 @@ class _StickersTabsState extends State<StickersTabs>
           child: TabBarView(
             controller: _tabController,
             children: [
-              StickersTabBarView(
-                key: const Key('stickersTabs_googleTabBarView'),
-                stickers: Assets.googleProps,
-                onStickerSelected: widget.onStickerSelected,
-              ),
               StickersTabBarView(
                 key: const Key('stickersTabs_hatsTabBarView'),
                 stickers: Assets.hatProps,
@@ -102,6 +97,11 @@ class _StickersTabsState extends State<StickersTabs>
               StickersTabBarView(
                 key: const Key('stickersTabs_shapesTabBarView'),
                 stickers: Assets.shapeProps,
+                onStickerSelected: widget.onStickerSelected,
+              ),
+              StickersTabBarView(
+                key: const Key('stickersTabs_customTabBarView'),
+                stickers: Assets.customProps,
                 onStickerSelected: widget.onStickerSelected,
               ),
             ],

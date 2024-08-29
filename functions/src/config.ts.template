@@ -1,0 +1,6 @@
+export const ENV = process.env.NODE_ENV;
+export const UPLOAD_PATH = 'uploads';
+export const SHARE_PATH = 'share';
+export const ALLOWED_HOSTS = [${ALLOWED_HOSTS}];
+export const SITE_NAME = "${SITE_NAME}";
+export const SITE_DESC = "${SITE_DESC}"

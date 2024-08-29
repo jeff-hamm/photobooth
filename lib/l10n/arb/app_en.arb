@@ -1,10 +1,10 @@
 {
     "@@locale": "en",
-    "landingPageHeading": "Welcome to the I\u2215O Photo Booth",
+    "landingPageHeading": "Welcome to Joceyln & Steven's Mystical Photo Booth",
     "@landingPageHeading": {
         "description": "Heading shown on the landing page."
     },
-    "landingPageSubheading": "Take a photo and share it with the community!",
+    "landingPageSubheading": "Take a photo in the Mystical Booth! Click 'Allow' to take a photo!",
     "@landingPageSubheading": {
         "description": "Subheading shown on the landing page."
     },
@@ -44,11 +44,11 @@
     "@footerPrivacyPolicyLinkText": {
         "description": "Text on the link shown on the footer which navigates to the Privacy Policy page."
     },
-    "sharePageHeading": "Share your photo with the community!",
+    "sharePageHeading": "Photo Shared!",
     "@sharePageHeading": {
         "description": "Heading shown on the share page."
     },
-    "sharePageSubheading": "Share your photo with the community!",
+    "sharePageSubheading": "Photo Shared!",
     "@sharePageSubheading": {
         "description": "Subheading shown on the share page."
     },
@@ -196,11 +196,11 @@
     "@photoBoothCameraNotSupportedSubheadline": {
         "description": "Text displayed on subheadline on the photobooth page when camera is not supported"
     },
-    "stickersDrawerTitle": "Add Props",
+    "stickersDrawerTitle": "Add Stickers",
     "@stickersDrawerTitle": {
         "description": "Text displayed on the stickers drawer as title"
     },
-    "openStickersTooltip": "Add Props",
+    "openStickersTooltip": "Add Stickers",
     "@openStickersTooltip": {
         "description": "Text displayed on the tooltip for the open stickers button"
     },
@@ -212,25 +212,13 @@
     "@clearStickersButtonTooltip": {
         "description": "Text displayed on the tooltip for the clear stickers button"
     },
-    "charactersCaptionText": "Add Friends",
+    "charactersCaptionText": "Add Lovebirds!",
     "@charactersCaptionText": {
         "description": "Text displayed as a caption on the characters layout"
     },
-    "sharePageLearnMoreAboutTextPart1": "Learn more about ",
+    "sharePageLearnMoreAboutTextPart1": "Your photo should appear on the projector shortly!",
     "@sharePageLearnMoreAboutTextPart1": {
         "description": "Part 1 text shown on the share page which mentions technologies used to build the app."
-    },
-    "sharePageLearnMoreAboutTextPart2": " and ",
-    "@sharePageLearnMoreAboutTextPart2": {
-        "description": "Part 2 text shown on the share page which mentions technologies used to build the app."
-    },
-    "sharePageLearnMoreAboutTextPart3": " or dive right into the ",
-    "@sharePageLearnMoreAboutTextPart3": {
-        "description": "Part 3 text shown on the share page which mentions technologies used to build the app."
-    },
-    "sharePageLearnMoreAboutTextPart4": "open source code",
-    "@sharePageLearnMoreAboutTextPart4": {
-        "description": "Part 4 text shown on the share page which mentions technologies used to build the app."
     },
     "goToGoogleIOButtonText": "Go to Google I\u2215O",
     "@goToGoogleIOButtonText": {
@@ -254,13 +242,13 @@
     },
     "propsReminderText": "Add some props",
     "@propsReminderText": {
-        "description": "Helper text to add props"
+        "description": "Helper text to Add Stickers"
     },
-    "stickersNextConfirmationHeading": "Ready to see the final photo?",
+    "stickersNextConfirmationHeading": "Are you ready to send the final photo?",
     "@stickersNextConfirmationHeading": {
         "description": "Heading shown in the confirmation when user taps the next button"
     },
-    "stickersNextConfirmationSubheading": "Once you leave this screen you won't be able to make any changes",
+    "stickersNextConfirmationSubheading": "Once you leave this screen your photo will be projected with the others",
     "@stickersNextConfirmationSubheading": {
         "description": "Subheading shown in the confirmation when user taps the next button"
     },
@@ -268,7 +256,7 @@
     "@stickersNextConfirmationCancelButtonText": {
         "description": "Cancel button text shown in the confirmation when user taps the next button"
     },
-    "stickersNextConfirmationConfirmButtonText": "Yes, show me",
+    "stickersNextConfirmationConfirmButtonText": "Yes, ship it!",
     "@stickersNextConfirmationConfirmButtonText": {
         "description": "Confirm button text shown in the confirmation when user taps the next button"
     },
@@ -328,9 +316,9 @@
     "@androidButtonLabelText": {
         "description": "Semantic label for the android jetpack character button"
     },
-    "addStickersButtonLabelText": "Add props",
+    "addStickersButtonLabelText": "Add Stickers",
     "@addStickersButtonLabelText": {
-        "description": "Semantic label for the add props button"
+        "description": "Semantic label for the Add Stickers button"
     },
     "retakePhotoButtonLabelText": "Retake photo",
     "@retakePhotoButtonLabelText": {

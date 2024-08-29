@@ -8,7 +8,7 @@ class PhotoboothTheme {
   /// Standard `ThemeData` for Photobooth UI.
   static ThemeData get standard {
     return ThemeData(
-      colorScheme: ColorScheme.fromSwatch(accentColor: PhotoboothColors.blue),
+      colorScheme: ColorScheme.fromSwatch(accentColor: PhotoboothColors.accent),
       appBarTheme: _appBarTheme,
       elevatedButtonTheme: _elevatedButtonTheme,
       outlinedButtonTheme: _outlinedButtonTheme,
@@ -95,14 +95,15 @@ class PhotoboothTheme {
   }
 
   static AppBarTheme get _appBarTheme {
-    return const AppBarTheme(color: PhotoboothColors.blue);
+    return const AppBarTheme(color: PhotoboothColors.accent);
   }
 
   static ElevatedButtonThemeData get _elevatedButtonTheme {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: PhotoboothColors.blue,
+        foregroundColor: PhotoboothColors.black,
+        backgroundColor: PhotoboothColors.accent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
@@ -159,10 +160,10 @@ class PhotoboothTheme {
       indicator: UnderlineTabIndicator(
         borderSide: BorderSide(
           width: 2,
-          color: PhotoboothColors.blue,
+          color: PhotoboothColors.accent,
         ),
       ),
-      labelColor: PhotoboothColors.blue,
+      labelColor: PhotoboothColors.accent,
       unselectedLabelColor: PhotoboothColors.black25,
       indicatorSize: TabBarIndicatorSize.tab,
     );

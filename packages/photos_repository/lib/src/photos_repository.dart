@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_compositor/image_compositor.dart';
+import '../../config.dart';
 
 /// {@template upload_photo_exception}
 /// Exception thrown when upload photo operation failed.
@@ -64,12 +65,9 @@ const _shareUrl = 'https://io-photobooth-dev.web.app/share';
 class PhotosRepository {
   /// {@macro photos_repository}
   PhotosRepository({
-    required FirebaseStorage firebaseStorage,
     ImageCompositor? imageCompositor,
-  })  : _firebaseStorage = firebaseStorage,
-        _imageCompositor = imageCompositor ?? ImageCompositor();
+  })  : _imageCompositor = imageCompositor ?? ImageCompositor();
 
-  final FirebaseStorage _firebaseStorage;
   final ImageCompositor _imageCompositor;
 
   /// Uploads photo to the [FirebaseStorage] if it doesn't already exist

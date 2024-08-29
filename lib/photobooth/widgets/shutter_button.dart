@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
-
-const _shutterCountdownDuration = Duration(seconds: 3);
+import '../../config.dart' as config;
 
 AudioPlayer _getAudioPlayer() => AudioPlayer();
 
@@ -41,7 +40,7 @@ class _ShutterButtonState extends State<ShutterButton>
     audioPlayer = widget._audioPlayer()..setAsset('assets/audio/camera.mp3');
     controller = AnimationController(
       vsync: this,
-      duration: _shutterCountdownDuration,
+      duration: config.CountdownDuration,
     )..addStatusListener(_onAnimationStatusChanged);
     unawaited(audioPlayer.play());
     audioPlayer.playerStateStream.listen((event) {
@@ -87,7 +86,7 @@ class CountdownTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final seconds =
-        (_shutterCountdownDuration.inSeconds * controller.value).ceil();
+        (config.CountdownDuration.inSeconds * controller.value).ceil();
     final theme = Theme.of(context);
     return Container(
       height: 70,
@@ -154,7 +153,7 @@ class TimerPainter extends CustomPainter {
   final int countdown;
   @visibleForTesting
   Color calculateColor() {
-    if (countdown == 3) return PhotoboothColors.blue;
+    if (countdown == 3) return PhotoboothColors.accent;
     if (countdown == 2) return PhotoboothColors.orange;
     return PhotoboothColors.green;
   }

@@ -3,7 +3,7 @@ part of 'stickers_bloc.dart';
 class StickersState extends Equatable {
   const StickersState({
     this.isDrawerActive = false,
-    this.shouldDisplayPropsReminder = true,
+    this.shouldDisplayPropsReminder = false,
     this.tabIndex = 0,
   });
 

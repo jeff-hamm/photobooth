@@ -1,0 +1,2 @@
+const SITE_NAME = "${SITE_NAME}";
+const SITE_DESC = "${SITE_DESC}";

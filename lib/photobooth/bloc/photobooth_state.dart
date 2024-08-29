@@ -72,15 +72,16 @@ class PhotoAsset extends Equatable {
 
 class PhotoboothState extends Equatable {
   const PhotoboothState({
-    this.aspectRatio = PhotoboothAspectRatio.landscape,
     this.characters = const <PhotoAsset>[],
     this.stickers = const <PhotoAsset>[],
     this.selectedAssetId = emptyAssetId,
+    this.aspectRatio = PhotoboothAspectRatio.portrait,
     this.image,
     this.imageId = '',
   });
 
   bool get isDashSelected => characters.containsAsset(named: 'dash');
+  bool isSelected(String name) => stickers.containsAsset(named: name);
 
   bool get isAndroidSelected => characters.containsAsset(named: 'android');
 
@@ -91,9 +92,9 @@ class PhotoboothState extends Equatable {
   bool get isAnyCharacterSelected => characters.isNotEmpty;
 
   List<PhotoAsset> get assets => characters + stickers;
-
+  
   final double aspectRatio;
-  final CameraImage? image;
+  final CameraImageBlob? image;
   final String imageId;
   final List<PhotoAsset> characters;
   final List<PhotoAsset> stickers;
@@ -111,7 +112,7 @@ class PhotoboothState extends Equatable {
 
   PhotoboothState copyWith({
     double? aspectRatio,
-    CameraImage? image,
+    CameraImageBlob? image,
     String? imageId,
     List<PhotoAsset>? characters,
     List<PhotoAsset>? stickers,

@@ -20,7 +20,7 @@ void main() {
 
     testWidgets('renders with provided colors', (tester) async {
       const color = PhotoboothColors.black;
-      const backgroundColor = PhotoboothColors.blue;
+      const backgroundColor = PhotoboothColors.accent;
       await tester.pumpWidget(
         AppCircularProgressIndicator(
           color: color,
