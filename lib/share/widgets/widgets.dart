@@ -4,7 +4,6 @@ export 'facebook_button.dart';
 export 'share_background.dart';
 export 'share_body.dart';
 export 'share_button.dart';
-export 'share_caption.dart';
 export 'share_copyable_link.dart';
 export 'share_heading.dart';
 export 'share_preview_photo.dart';

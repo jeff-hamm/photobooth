@@ -16,9 +16,8 @@ typedef UuidGetter = String Function();
 const _debounceDuration = Duration(milliseconds: 16);
 
 class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
-  PhotoboothBloc([UuidGetter? uuid])
-      : uuid = uuid ?? const Uuid().v4,
-        super(const PhotoboothState()) {
+  PhotoboothBloc(UuidGetter? uuid,{bool isPrimaryClient=false})
+      : this.uuid=uuid??const Uuid().v4, super(PhotoboothState(isPrimaryClient)) {
     EventTransformer<E> debounce<E extends PhotoboothEvent>() =>
         (Stream<E> events, EventMapper<E> mapper) =>
             events.debounceTime(_debounceDuration).asyncExpand(mapper);

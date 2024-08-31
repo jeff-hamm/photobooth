@@ -71,7 +71,8 @@ class PhotoAsset extends Equatable {
 }
 
 class PhotoboothState extends Equatable {
-  const PhotoboothState({
+  const PhotoboothState(
+    this.isPrimaryClient,{
     this.characters = const <PhotoAsset>[],
     this.stickers = const <PhotoAsset>[],
     this.selectedAssetId = emptyAssetId,
@@ -93,6 +94,7 @@ class PhotoboothState extends Equatable {
 
   List<PhotoAsset> get assets => characters + stickers;
   
+  final bool isPrimaryClient;
   final double aspectRatio;
   final CameraImageBlob? image;
   final String imageId;
@@ -117,8 +119,10 @@ class PhotoboothState extends Equatable {
     List<PhotoAsset>? characters,
     List<PhotoAsset>? stickers,
     String? selectedAssetId,
+    bool? isPrimaryClient,
   }) {
     return PhotoboothState(
+      isPrimaryClient ?? this.isPrimaryClient,
       aspectRatio: aspectRatio ?? this.aspectRatio,
       image: image ?? this.image,
       imageId: imageId ?? this.imageId,

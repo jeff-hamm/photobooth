@@ -1,0 +1,27 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+      "composite": true,
+      "noImplicitAny": false,
+      "noEmitOnError": true,
+      "removeComments": false,
+      "sourceMap": true,
+      "target": "ES2020",
+      "moduleResolution": "node",
+      "module": "Preserve",
+      "outDir": "web/js",
+      "lib": [ "ES2020", "DOM" ],
+      "baseUrl": "node_modules",
+      "rootDir": "ts"
+    },
+    "include": [ "ts/**/*",],
+    "paths": {
+      "*": [
+        "*",
+        "ts/*",
+        "node_modules/*"
+      ]
+    },
+    "exclude": [ "web/**/*"],
+    
+  }

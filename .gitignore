@@ -129,3 +129,5 @@ app.*.map.json
 !.idea/codeStyles/
 !.idea/dictionaries/
 !.idea/runConfigurations/
+node_modules/
+web/js

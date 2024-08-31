@@ -4,11 +4,13 @@ import 'package:analytics/analytics.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:io_photobooth/common/retake_button.dart';
 import 'package:io_photobooth/external_links/external_links.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ShareBody extends StatelessWidget {
   const ShareBody({super.key});
@@ -64,20 +66,18 @@ class ShareBody extends StatelessWidget {
                     ),
                   if (compositedImage != null && file != null)
                     ResponsiveLayoutBuilder(
-                      small: (_, __) => MobileButtonsLayout(
+                      small: (_, __) => ShareButtonsLayout(
                         image: compositedImage,
                         file: file,
+                        size: const Size(0,20),
+                        shareUrl: isUploadSuccess ? shareUrl : null,
                       ),
-                      large: (_, __) => DesktopButtonsLayout(
+                      large: (_, __) => ShareButtonsLayout(
                         image: compositedImage,
                         file: file,
+                        size: const Size(36,0),
+                        shareUrl: isUploadSuccess ? shareUrl : null,
                       ),
-                    ),
-                  const SizedBox(height: 28),
-                  if (isUploadSuccess)
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000),
-                      child: const ShareSuccessCaption(),
                     ),
                 ],
               ),
@@ -102,53 +102,84 @@ class ShareBody extends StatelessWidget {
 }
 
 @visibleForTesting
-class DesktopButtonsLayout extends StatelessWidget {
-  const DesktopButtonsLayout({
+class ShareButtonsLayout extends StatelessWidget {
+  const ShareButtonsLayout({
     required this.image,
     required this.file,
+    required this.size,
+    this.shareUrl,
     super.key,
   });
 
+  final String? shareUrl;
   final Uint8List image;
   final XFile file;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Flexible(child: DownloadButton(file: file)),
-        // const SizedBox(width: 36),
-        // Flexible(child: ShareButton(image: image)),
-      ],
-    );
-  }
-}
-
-@visibleForTesting
-class MobileButtonsLayout extends StatelessWidget {
-  const MobileButtonsLayout({
-    required this.image,
-    required this.file,
-    super.key,
-  });
-
-  final Uint8List image;
-  final XFile file;
-
+  final Size size;
+  final prompt = 'A photo booth in a mystical forest';
   @override
   Widget build(BuildContext context) {
     return Column(
+      children: [Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        DownloadButton(file: file),
-        const SizedBox(height: 20),
-        ShareButton(image: image),
-        const SizedBox(height: 20),
+        Flexible(child: DownloadButton(file: file)),
+        SizedBox(width: size.width > 0 ? size.width : null, height: size.height > 0 ? size.height : null),
+        Flexible(child: RetakeButton()),
+        SizedBox(width: size.width > 0 ? size.width : null, height: size.height > 0 ? size.height : null),
       ],
-    );
+    ),
+    if(shareUrl != null)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [        
+                   SizedBox(height: 50),
+         QrImageView(
+            data: shareUrl!,
+            version: QrVersions.auto,
+            size: 200.0,
+
+          ),
+                   SizedBox(height: 50),
+          QrImageView(
+              data: 'http://127.0.0.1:5023/wedding?image=' + Uri.encodeComponent( shareUrl!) + '&prompt=' + Uri.encodeComponent(prompt) + '&tenant=wedding',
+              version: QrVersions.auto,
+              size: 200.0,
+            ),
+    ])]);
   }
 }
+
+// @visibleForTesting
+// class MobileButtonsLayout extends StatelessWidget {
+//   const MobileButtonsLayout({
+//     required this.image,
+//     required this.file,
+//     this.shareUrl,
+//     super.key,
+//   });
+//   final String? shareUrl;
+//   final Uint8List image;
+//   final XFile file;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         DownloadButton(file: file),
+//         const SizedBox(height: 20),
+//         RetakeButton(),
+//         const SizedBox(height: 20),
+//         if(shareUrl != null && context.read<PhotoboothBloc>().state.isPrimaryClient)
+//           QrImageView(
+//             data: shareUrl!,
+//             version: QrVersions.auto,
+//             size: 50.0,
+//           ),
+//       ],
+//     );
+//   }
+// }
 
 @visibleForTesting
 class DownloadButton extends StatelessWidget {

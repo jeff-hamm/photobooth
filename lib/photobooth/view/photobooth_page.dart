@@ -29,7 +29,7 @@ class PhotoboothPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PhotoboothBloc(),
+      create: (_) => PhotoboothBloc(null, isPrimaryClient: Uri.base.queryParameters['primary'] == '1'),
       child: Navigator(
         onGenerateRoute: (_) => AppPageRoute(
           builder: (_) => const PhotoboothView(),
@@ -112,8 +112,8 @@ class _PhotoboothViewState extends State<PhotoboothView> {
             return;
           }
           final d =           _cameras!.first;
-          cameraDescription = 
-          CameraDescription(name: d.name, lensDirection: d.lensDirection, sensorOrientation: 90);
+          final o = context.read<PhotoboothBloc?>()?.state.aspectRatio == PhotoboothAspectRatio.landscape ? 90 : 0;
+          cameraDescription = CameraDescription(name: d.name, lensDirection: d.lensDirection, sensorOrientation: o);
         }
       final cameraController = CameraController(
       cameraDescription!,
