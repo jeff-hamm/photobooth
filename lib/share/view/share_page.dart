@@ -9,7 +9,7 @@ import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import '../../common/photos_repository.dart';
-
+import '../../config.dart' as config;
 class SharePage extends StatelessWidget {
   const SharePage({super.key});
 
@@ -30,6 +30,7 @@ class SharePage extends StatelessWidget {
           assets: state.assets,
           aspectRatio: state.aspectRatio,
           shareText: l10n.socialMediaShareLinkText,
+          aiPrompt: config.AiPrompt,
         )..add(const ShareViewLoaded());
       },
       child: const ShareView(),
@@ -51,6 +52,7 @@ class ShareView extends StatelessWidget {
           overlays: [
             _ShareRetakeButton(),
             ShareProgressOverlay(),
+            
           ],
         ),
       ),

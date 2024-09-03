@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera/camera.dart';
-import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
-import 'package:io_photobooth/landing/widgets/landing_background.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/photobooth/view/loading_body.dart';
 import 'package:io_photobooth/stickers/stickers.dart';
@@ -46,108 +45,42 @@ class PhotoboothView extends StatefulWidget {
   State<PhotoboothView> createState() => _PhotoboothViewState();
 }
 
-class _PhotoboothViewState extends State<PhotoboothView> {
-  CameraController? _controller;
-  double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 1.0;
-  double _currentScale = 1.0;
-  double _baseScale = 1.0;
+class _PhotoboothViewState extends State<PhotoboothView> with WidgetsBindingObserver {
   int seed = Random().nextInt(1<<31);
-  bool get _isCameraAvailable => _controller?.value.isInitialized ?? false;
-
-  Future<void> _play() async {
-    if (!_isCameraAvailable) return;
-    return _controller?.resumePreview();
-  }
-
-  Future<void> _stop() async {
-    if (!_isCameraAvailable) return;
-    return _controller?.pausePreview();
-  }
-
+  late final Timer timer;
+  var _hasSplashShown = false;
   @override
   void initState() {
     super.initState();
-    _initializeCameraController(null);
+    final service =context.read<CameraService>(); 
+    if(service.value.cameraError != null) {
+      displayCameraError(service.value.cameraError!);
+    }
+    service.addListener(_onCameraServiceChanged);
+//    unawaited(service.initState());
+    timer = Timer(const Duration(seconds: 2), () async {
+      await service.initState();
+      setState(()  {
+        _hasSplashShown = true;
+      });
+    });
   }
-
   @override
   void dispose() {
-    _controller?.dispose();
+//    final svc = context.read<CameraService>(); 
+    timer.cancel();
+//    unawaited(svc.stop());
+//    unawaited(svc.disposeController());
     super.dispose();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final cameraController = _controller;
-
-    // App state changed before we got the chance to initialize.
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      return;
-    }
-    if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
-    } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
-    }
+    context.read<CameraService>().updateLifecycle(state);
   }
-  List<CameraDescription>? _cameras;
-  void showInSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message),
-        action: SnackBarAction(
-        label: 'Reload',
-        onPressed: () {
-          setState(() {});
-        },
-      ),
-        ));
-  }
-  Future<void> _initializeCameraController(
-      CameraDescription? cameraDescription) async {
-      try {
 
-        if(cameraDescription == null) {
-          _cameras ??= await availableCameras();
-          if(_cameras == null || _cameras!.isEmpty) {
-            return;
-          }
-          final d =           _cameras!.first;
-          final o = context.read<PhotoboothBloc?>()?.state.aspectRatio == PhotoboothAspectRatio.landscape ? 90 : 0;
-          cameraDescription = CameraDescription(name: d.name, lensDirection: d.lensDirection, sensorOrientation: o);
-        }
-      final cameraController = CameraController(
-      cameraDescription!,
-      config.CameraResolution,
-      enableAudio: false,
-      imageFormatGroup: config.CameraImageFormat,
-    );
-
-    _controller = cameraController;
-
-    // If the controller is updated then update the UI.
-    cameraController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-      if (cameraController.value.hasError) {
-        showInSnackBar(
-            'Camera error ${cameraController.value.errorDescription}');
-      }
-    });
-
-      await cameraController.initialize();
-      await Future.wait(<Future<Object?>>[
-        // The exposure mode is currently not supported on the web.
-        ...<Future<Object?>>[],
-        // cameraController
-        //     .getMaxZoomLevel()
-        //     .then((double value) => _maxAvailableZoom = value),
-        // cameraController
-        //     .getMinZoomLevel()
-        //     .then((double value) => _minAvailableZoom = value),
-      ]);
-    } on CameraException catch (e) {
-      switch (e.code) {
+  void displayCameraError(CameraException e) {
+    switch (e.code) {
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access. Please enable it and refresh the page.'); 
           break;
@@ -159,31 +92,43 @@ class _PhotoboothViewState extends State<PhotoboothView> {
           showInSnackBar('Camera access is restricted.'); break;
         default:
           _showCameraException(e);
-          break;
+        break;
       }
-    }
 
-    if (mounted) {
-      setState(() {});
-    }
+  }
+  void showInSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message),
+        action: SnackBarAction(
+        label: 'Reload',
+        onPressed: () {
+          setState(() {});
+        },
+      ),
+        ));
   }
   
   void _showCameraException(CameraException e) {
     _logError(e.code, e.description);
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
+  Future<void> _onFlipPressed() async {
+     await context.read<CameraService>().flipCamera();
+  }
 
   Future<void> _onSnapPressed() async {
     final navigator = Navigator.of(context);
     final photoboothBloc = context.read<PhotoboothBloc>();
-    if(_controller == null)
+    final cameraService = context.read<CameraService>();
+    if(!cameraService.isCameraAvailable)
     {
       showInSnackBar("Unexpected error, missing controller");
       return;
     }
-    final size = _controller?.value.previewSize;
-    final aspectRatio = _controller?.value.aspectRatio;
-    final picture = await _controller?.takePicture();
+    final value = cameraService.value.controllerValue;
+    final size = value.previewSize;
+    final aspectRatio = value.aspectRatio;
+    final picture = await cameraService.takePicture();
     if(picture == null) {
       showInSnackBar("Error taking picture, try again");
       return;
@@ -192,29 +137,43 @@ class _PhotoboothViewState extends State<PhotoboothView> {
       CameraImageBlob(data: picture.path, width:size?.width.toInt()??1, height: size?.height.toInt()??1)
       ));
     final stickersPage = StickersPage.route();
-    await _stop();
+    cameraService.removeListener(_onCameraServiceChanged);
+//    await cameraService.stop();
     unawaited(navigator.pushReplacement(stickersPage));
+//    await cameraService.play();
   }
+
 
   @override
   Widget build(BuildContext context) {
-    if(_controller == null) {
-      return const LoadingBody();
-    }
-    return Scaffold(
-      body: PhotoboothBackgroundStack(
-        child: Camera(
-          controller: _controller!,
-          placeholder: (_) => const SizedBox(),
-          preview: (context, preview) => PhotoboothPreview(
-            preview: preview,
-            onSnapPressed: () => _onSnapPressed(),
-            seed: seed
+    final service = context.read<CameraService>();
+    return  Scaffold(
+      body: AppAnimatedCrossFade(crossFadeState: service.isCameraAvailable && _hasSplashShown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      firstChild: const LoadingBody(), 
+      secondChild: PhotoboothBackgroundStack(
+          child: Camera(
+            placeholder: (_) => const SizedBox(),
+            preview: (context, preview) => PhotoboothPreview(
+              preview: preview,
+              onSnapPressed: () => _onSnapPressed(),
+              onFlipPressed: () => _onFlipPressed(),
+              seed: seed
+            ),
+            error: (context, error) => PhotoboothError(error: error),
           ),
-          error: (context, error) => PhotoboothError(error: error),
-        ),
-      ),
+        )
+      )
     );
+  }
+
+  void _onCameraServiceChanged() {
+      if (mounted) {
+          setState(() {});
+        final error = context.read<CameraService>().value.cameraError;
+        if (error != null) {
+          _showCameraException(error);
+        }
+      }
   }
 }
 
@@ -239,6 +198,7 @@ class PhotoboothBackgroundStack extends StatelessWidget {
           aspectRatio = newRatio;
         }
       return Stack(
+        fit: StackFit.expand,
       children: [
         const PhotoboothBackground(),
         Center(

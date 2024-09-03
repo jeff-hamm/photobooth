@@ -38,6 +38,25 @@ class ShareSuccessHeading extends StatelessWidget {
   }
 }
 
+
+class SuccessHeading extends StatelessWidget {
+  const SuccessHeading(this.heading,{super.key});
+
+  final String heading;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SelectableText(
+      this.heading,
+      style: theme.textTheme.displayLarge?.copyWith(
+        color: PhotoboothColors.accent,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+}
+
 class ShareErrorHeading extends StatelessWidget {
   const ShareErrorHeading({super.key});
 

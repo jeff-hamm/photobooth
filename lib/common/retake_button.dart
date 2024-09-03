@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
@@ -25,13 +26,21 @@ class _RetakeButtonState extends State<RetakeButton>
     with TickerProviderStateMixin {
   late final AnimationController controller;
 
-  void _onAnimationStatusChanged(AnimationStatus status) {
+  Future<void> _onAnimationStatusChanged(AnimationStatus status) async {
     if (status == AnimationStatus.dismissed) {
       widget.onCountdownComplete?.call();
       final navigator = Navigator.of(context);
-      final photoboothBloc = context.read<PhotoboothBloc>();
-      photoboothBloc.add(const PhotoClearAllTapped());
-      unawaited(navigator.pushReplacement(PhotoboothPage.route()));
+      final photoboothBloc = 
+      context.read<PhotoboothBloc>()
+        ..add(const PhotoClearAllTapped());
+      final svc = context.read<CameraService>();
+//       unawaited(Future<void>(() async {
+// //        await svc.disposeController();
+        await svc.stop();
+        await navigator.pushReplacement(PhotoboothPage.route());
+        await svc.play();
+//        await svc.initState();
+//        }));
     }
   }
 

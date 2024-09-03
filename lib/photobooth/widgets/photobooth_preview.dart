@@ -4,6 +4,7 @@ import 'package:analytics/analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/assets.g.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/photobooth/widgets/side_icon_button.dart';
@@ -15,11 +16,13 @@ class PhotoboothPreview extends StatelessWidget {
   const PhotoboothPreview({
     required this.preview,
     required this.onSnapPressed,
+    required this.onFlipPressed,
     required this.seed,
     super.key,
   });
   final Widget preview;
   final VoidCallback onSnapPressed;
+  final VoidCallback onFlipPressed;
   final int seed;
 
   @override
@@ -27,6 +30,7 @@ class PhotoboothPreview extends StatelessWidget {
     final state = context.watch<PhotoboothBloc>().state;
 //    final children = _getCharacterIcons(context,state);
     final children = _getRandomProps(context,state);
+    final service = context.read<CameraService>();
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -65,12 +69,20 @@ class PhotoboothPreview extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 30),
-            child: ShutterButton(
-              key: const Key('photoboothPreview_photo_shutterButton'),
-              onCountdownComplete: onSnapPressed,
-            ),
+            child: 
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ShutterButton(
+                  key: const Key('photoboothPreview_photo_shutterButton'),
+                  onCountdownComplete: onSnapPressed,
+                ),
+                if(service.canFlip())
+                  CameraButton(onPressed: onFlipPressed,icon: 'assets/icons/retake_button_icon.png',)
+              ])
           ),
-        ),
+              )
       ],
     );
   }

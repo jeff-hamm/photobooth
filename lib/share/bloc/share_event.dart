@@ -22,6 +22,19 @@ class ShareOnTwitterTapped extends ShareTapped {
 class ShareOnFacebookTapped extends ShareTapped {
   const ShareOnFacebookTapped();
 }
+class GenerateAiImageSucceeded extends ShareEvent {
+  const GenerateAiImageSucceeded({required this.imageUrls, required this.aiPrompt});
+  final String aiPrompt;
+  final List<String> imageUrls;
+}
+class _ShareUploadSucceeded extends ShareEvent {
+  const _ShareUploadSucceeded({required this.url});
+  final String url;
+}
+class _AiImageUploadSucceeded extends ShareEvent {
+  const _AiImageUploadSucceeded({required this.imageUrls});
+  final List<String> imageUrls;
+}
 
 class _ShareCompositeSucceeded extends ShareEvent {
   const _ShareCompositeSucceeded({required this.bytes});

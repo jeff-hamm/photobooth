@@ -22,10 +22,15 @@ class ShareState extends Equatable {
     this.isDownloadRequested = false,
     this.isUploadRequested = true,
     this.shareUrl = ShareUrl.none,
+    this.aiStatus = ShareStatus.initial,
+    this.aiImages,
+    this.aiPrompt = ''
   });
 
   final ShareStatus compositeStatus;
   final ShareStatus uploadStatus;
+  final ShareStatus aiStatus;
+  final List<String>? aiImages;
   final XFile? file;
   final Uint8List? bytes;
   final String explicitShareUrl;
@@ -34,18 +39,21 @@ class ShareState extends Equatable {
   final bool isUploadRequested;
   final bool isDownloadRequested;
   final ShareUrl shareUrl;
+  final String aiPrompt;
 
   @override
   List<Object?> get props => [
         compositeStatus,
         uploadStatus,
         file,
-        bytes,
+//        bytes,
         twitterShareUrl,
         facebookShareUrl,
         isUploadRequested,
         isDownloadRequested,
         shareUrl,
+        aiStatus,
+        aiImages
       ];
 
   ShareState copyWith({
@@ -59,6 +67,9 @@ class ShareState extends Equatable {
     bool? isUploadRequested,
     bool? isDownloadRequested,
     ShareUrl? shareUrl,
+    ShareStatus? aiStatus,
+    List<String>? aiImages,
+    String? aiPrompt
   }) {
     return ShareState(
       compositeStatus: compositeStatus ?? this.compositeStatus,
@@ -71,6 +82,9 @@ class ShareState extends Equatable {
       isUploadRequested: isUploadRequested ?? this.isUploadRequested,
       isDownloadRequested: isDownloadRequested ?? this.isDownloadRequested,
       shareUrl: shareUrl ?? this.shareUrl,
+      aiStatus: aiStatus ?? this.aiStatus,
+      aiImages: aiImages ?? this.aiImages,
+      aiPrompt: aiPrompt ?? this.aiPrompt
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/share/share.dart';
@@ -30,6 +32,9 @@ class ShareStateListener extends StatelessWidget {
     } else if (state.uploadStatus.isSuccess) {
       _onShareSuccess(context, state);
     }
+    if(state.aiStatus.isSuccess) {
+      _onAiSuccess(context,state);
+    }
   }
 
   void _onShareError(BuildContext context, ShareState state) {
@@ -38,6 +43,36 @@ class ShareStateListener extends StatelessWidget {
       context: context,
       portraitChild: const ShareErrorBottomSheet(),
       landscapeChild: const ShareErrorDialog(),
+    );
+  }
+  void _onAiSuccess(BuildContext context, ShareState state) {
+    final w =             AnimatedFadeIn(
+      child: 
+      ColoredBox(
+      color: PhotoboothColors.black.withOpacity(0.8),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  const SuccessHeading("AI Generated Image"),
+                  const SizedBox(height: 20),
+                  SuccessSubheading(state.aiPrompt),
+                  state.aiImages != null ?
+                    AnimatedPhotoboothPhoto(image: state.aiImages![0]) :
+                   const AppCircularProgressIndicator()
+                  ]
+                )
+        )
+      )
+      ));
+    showAppModal<void>(
+      platformHelper: platformHelper,
+      context: context,
+      portraitChild: w,
+      landscapeChild: w,
     );
   }
 

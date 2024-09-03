@@ -95,6 +95,11 @@ class FirebasePhotosRepository extends PhotosRepository<Reference> {
     }
   }
     String getSharePhotoUrl(Reference ref) => '${config.ShareUrl}/${ref.name}';
+    
+      @override
+      Future<List<String>> generateAiPhoto({required Reference fileName, required String prompt, required String negative}) {
+        return Future.value([]);
+      }
 
 }
 
@@ -134,6 +139,12 @@ abstract class PhotosRepository<TReference> {
       twitterShareUrl: _twitterShareUrl(r2, shareText),
     );
   }
+
+  Future<List<String>> generateAiPhoto({
+    required TReference fileName,
+    required String prompt,
+    required String negative,
+  });
 
   /// Given an image ([data]) with the provided [layers]
   /// it will return a ByteArray ([Uint8List]) which represents a

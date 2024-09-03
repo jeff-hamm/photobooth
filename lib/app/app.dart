@@ -1,7 +1,9 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
@@ -10,20 +12,20 @@ import '../config.dart' as config;
 
 class App extends StatelessWidget {
   const App({
-    required this.authenticationRepository,
+  //  required this.authenticationRepository,
     required this.photosRepository,
+    required this.cameraService,
     super.key,
   });
-
-  final AuthenticationRepository authenticationRepository;
+//  final AuthenticationRepository authenticationRepository;
   final PhotosRepository photosRepository;
-
+  final CameraService cameraService;
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider.value(value: authenticationRepository),
+    return MultiProvider(providers: 
+      [
         RepositoryProvider.value(value: photosRepository),
+        ChangeNotifierProvider.value(value: cameraService)
       ],
       child: AnimatedFadeIn(
         child: ResponsiveLayoutBuilder(

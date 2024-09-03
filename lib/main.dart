@@ -1,42 +1,42 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
 
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/app/app.dart';
 import 'package:io_photobooth/app/app_bloc_observer.dart';
-import 'package:io_photobooth/firebase_options.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/landing/loading_indicator_io.dart'
-    if (dart.library.html) 'landing/loading_indicator_web.dart';
+if (dart.library.html) 'landing/loading_indicator_web.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import 'common/butts_repository.dart';
-
+import 'package:camera/camera.dart';
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  Bloc.observer = AppBlocObserver();
-  FlutterError.onError = (details) {
-    print(details.exceptionAsString());
-    print(details.stack);
-  };
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await runZonedGuarded(
+    () async { 
+      WidgetsFlutterBinding.ensureInitialized();
+      Bloc.observer = AppBlocObserver();
+  // FlutterError.onError = (details) {
+  //   print(details.exceptionAsString());
+  //   print(details.stack);
+  // };
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
 
-  final authenticationRepository = AuthenticationRepository(
-    firebaseAuth: FirebaseAuth.instance,
-  );
+  // final authenticationRepository = AuthenticationRepository(
+  //   firebaseAuth: FirebaseAuth.instance,
+  // );
+
   final photosRepository = ButtsPhotosRepository();
+  final cameraService = CameraService();
 
-  unawaited(
-    authenticationRepository.signInAnonymously(),
-  );
-
+  // unawaited(
+  //   authenticationRepository.signInAnonymously(),
+  // );
+  
   unawaited(
     Future.wait([
       Flame.images.load('android_spritesheet.png'),
@@ -51,14 +51,13 @@ void main() async {
 
     ]),
   );
-
-  runZonedGuarded(
-    () => runApp(
+  runApp(
       App(
-        authenticationRepository: authenticationRepository,
+//        authenticationRepository: authenticationRepository,
         photosRepository: photosRepository,
-      ),
-    ),
+        cameraService: cameraService
+      ));
+    },
     (error, stackTrace) {
       print(error);
       print(stackTrace);

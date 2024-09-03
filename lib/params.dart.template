@@ -1,2 +1,6 @@
 const SITE_NAME = "${SITE_NAME}";
 const SITE_DESC = "${SITE_DESC}";
+const ImageServer = "${IMAGE_SERVER}";
+final ShareUrl =  Uri.parse("${IMAGE_SERVER}/api/butts/upload");
+final GradioUrl = "${GRADIO_URL}";
+const CountdownDuration=Duration(seconds: ${COUNTDOWN_SECONDS});

@@ -17,7 +17,7 @@ class ShareBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = context.select((PhotoboothBloc bloc) => bloc.state.image);
+    final image = context.select((PhotoboothBloc bloc) => bloc.state.image)?.data;
     final file = context.select((ShareBloc bloc) => bloc.state.file);
     final compositeStatus = context.select(
       (ShareBloc bloc) => bloc.state.compositeStatus,
@@ -31,7 +31,11 @@ class ShareBody extends StatelessWidget {
     final shareUrl = context.select(
       (ShareBloc bloc) => bloc.state.explicitShareUrl,
     );
-
+    final aiStatus = context.select(
+      (ShareBloc bloc) => bloc.state.aiStatus,
+    );
+    final aiImages = context.select((ShareBloc bloc) => bloc.state.aiImages);
+    final aiPrompt = context.select((ShareBloc bloc) => bloc.state.aiPrompt);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -44,7 +48,7 @@ class ShareBody extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 60),
                   if (isUploadSuccess)
                     const ShareSuccessHeading()
                   else
@@ -94,7 +98,21 @@ class ShareBody extends StatelessWidget {
                   SizedBox(height: 30),
                 ],
               ),
-            )
+            ),
+          if(aiStatus == ShareStatus.success || aiStatus == ShareStatus.loading)
+            AnimatedFadeIn(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
+                  const SuccessHeading("AI Generated Image"),
+                  const SizedBox(height: 20),
+                  SuccessSubheading(aiPrompt),
+                  aiImages != null ?
+                    AnimatedPhotoboothPhoto(image: aiImages![0]) :
+                   const AppCircularProgressIndicator(),
+                ]))
+
         ],
       ),
     );

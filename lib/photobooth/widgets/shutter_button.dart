@@ -7,17 +7,15 @@ import 'package:just_audio/just_audio.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import '../../config.dart' as config;
 
-AudioPlayer _getAudioPlayer() => AudioPlayer();
 
 class ShutterButton extends StatefulWidget {
   const ShutterButton({
     required this.onCountdownComplete,
     super.key,
     ValueGetter<AudioPlayer>? audioPlayer,
-  }) : _audioPlayer = audioPlayer ?? _getAudioPlayer;
+  });
 
   final VoidCallback onCountdownComplete;
-  final ValueGetter<AudioPlayer> _audioPlayer;
 
   @override
   State<ShutterButton> createState() => _ShutterButtonState();
@@ -26,7 +24,6 @@ class ShutterButton extends StatefulWidget {
 class _ShutterButtonState extends State<ShutterButton>
     with TickerProviderStateMixin {
   late final AnimationController controller;
-  late final AudioPlayer audioPlayer;
 
   void _onAnimationStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.dismissed) {
@@ -37,17 +34,10 @@ class _ShutterButtonState extends State<ShutterButton>
   @override
   void initState() {
     super.initState();
-    audioPlayer = widget._audioPlayer()..setAsset('assets/audio/camera.mp3');
     controller = AnimationController(
       vsync: this,
       duration: config.CountdownDuration,
     )..addStatusListener(_onAnimationStatusChanged);
-    unawaited(audioPlayer.play());
-    audioPlayer.playerStateStream.listen((event) {
-      if (event.processingState == ProcessingState.ready) {
-        audioPlayer.pause();
-      }
-    });
   }
 
   @override
@@ -55,13 +45,10 @@ class _ShutterButtonState extends State<ShutterButton>
     controller
       ..removeStatusListener(_onAnimationStatusChanged)
       ..dispose();
-    audioPlayer.dispose();
     super.dispose();
   }
 
   Future<void> _onShutterPressed() async {
-    await audioPlayer.seek(null);
-    unawaited(audioPlayer.play());
     unawaited(controller.reverse(from: 1));
   }
 
@@ -115,10 +102,10 @@ class CountdownTimer extends StatelessWidget {
 }
 
 class CameraButton extends StatelessWidget {
-  const CameraButton({required this.onPressed, super.key});
+  const CameraButton({required this.onPressed, this.icon='assets/icons/camera_button_icon.png', super.key});
 
   final VoidCallback onPressed;
-
+  final String icon;
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -133,7 +120,7 @@ class CameraButton extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           child: Image.asset(
-            'assets/icons/camera_button_icon.png',
+            this.icon,
             height: 100,
             width: 100,
           ),

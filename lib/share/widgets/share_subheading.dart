@@ -42,6 +42,24 @@ class ShareSuccessSubheading extends StatelessWidget {
     );
   }
 }
+class SuccessSubheading extends StatelessWidget {
+  const SuccessSubheading(this.subheading, {super.key});
+
+  final String subheading;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = context.l10n;
+
+    return SelectableText(
+      subheading,
+      style: theme.textTheme.displaySmall?.copyWith(
+        color: PhotoboothColors.accent,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+}
 
 class ShareErrorSubheading extends StatelessWidget {
   const ShareErrorSubheading({super.key});
