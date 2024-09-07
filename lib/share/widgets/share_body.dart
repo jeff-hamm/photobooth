@@ -17,7 +17,7 @@ class ShareBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = context.select((PhotoboothBloc bloc) => bloc.state.image)?.data;
+    final image = context.select((PhotoboothBloc bloc) => bloc.state.image);
     final file = context.select((ShareBloc bloc) => bloc.state.file);
     final compositeStatus = context.select(
       (ShareBloc bloc) => bloc.state.compositeStatus,
@@ -36,13 +36,25 @@ class ShareBody extends StatelessWidget {
     );
     final aiImages = context.select((ShareBloc bloc) => bloc.state.aiImages);
     final aiPrompt = context.select((ShareBloc bloc) => bloc.state.aiPrompt);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
+    final mediaSize = MediaQuery.of(context).size;
+    final aspectRatio = image != null && image.height > 0 ? image.width / image.height : mediaSize.aspectRatio;
+    return 
+    // Padding(
+    //   padding: const EdgeInsets.symmetric(horizontal: 24),
+    //   child: 
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const AnimatedPhotoIndicator(),
-          AnimatedPhotoboothPhoto(image: image),
+//          const AnimatedPhotoIndicator(),
+          FittedBox(
+    fit: BoxFit.fitWidth,  // This ensures the width is fully covered without stretching.
+    child:SizedBox(
+      width: mediaSize.width,
+      height: mediaSize.height,
+          child: AspectRatio(aspectRatio: aspectRatio,
+    child: AnimatedPhotoboothPhoto(image: image?.data),
+    ))),
           if (compositeStatus.isSuccess)
             AnimatedFadeIn(
               child: Column(
@@ -114,7 +126,7 @@ class ShareBody extends StatelessWidget {
                 ]))
 
         ],
-      ),
+//      ),
     );
   }
 }

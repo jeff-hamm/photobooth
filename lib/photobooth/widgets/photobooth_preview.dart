@@ -1,10 +1,12 @@
 import 'dart:math';
 
 import 'package:analytics/analytics.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/assets.g.dart';
 import 'package:io_photobooth/common/camera_service.dart';
+import 'package:io_photobooth/common/media_size_clipper.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/photobooth/widgets/side_icon_button.dart';
@@ -30,8 +32,10 @@ class PhotoboothPreview extends StatelessWidget {
     final state = context.watch<PhotoboothBloc>().state;
 //    final children = _getCharacterIcons(context,state);
     final children = _getRandomProps(context,state);
-    final service = context.read<CameraService>();
-    return Stack(
+    final service = context.watch<CameraService>();
+    return MediaSizeClipper(
+       aspectRatio: service.value.controllerValue.aspectRatio,
+      child:  Stack(
       fit: StackFit.expand,
       children: [
         preview,
@@ -84,6 +88,7 @@ class PhotoboothPreview extends StatelessWidget {
           ),
               )
       ],
+    )
     );
   }
   List<Widget> _getRandomProps(BuildContext context,PhotoboothState state) {

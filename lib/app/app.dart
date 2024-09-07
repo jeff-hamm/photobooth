@@ -9,6 +9,7 @@ import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import '../common/photos_repository.dart';
 import '../config.dart' as config;
+import '../landing/view/landing_page.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -54,7 +55,7 @@ class _App extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        body: const PhotoboothPage()
+        body: const LandingPage()
     ));
   }
 }

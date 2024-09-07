@@ -1,18 +1,17 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:io_photobooth/app/app.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/landing/landing.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
-import 'package:photos_repository/photos_repository.dart';
+import 'package:io_photobooth/common/photos_repository.dart';
+
 
 import 'helpers/helpers.dart';
 
-class MockAuthenticationRepository extends Mock
-    implements AuthenticationRepository {}
-
 class MockPhotosRepository extends Mock implements PhotosRepository {}
+class MockCameraService extends Mock implements CameraService {}
 
 void main() {
   group('App', () {
@@ -20,8 +19,8 @@ void main() {
       tester.setDisplaySize(const Size(PhotoboothBreakpoints.large, 1000));
       await tester.pumpWidget(
         App(
-          authenticationRepository: MockAuthenticationRepository(),
           photosRepository: MockPhotosRepository(),
+          cameraService: MockCameraService(),
         ),
       );
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
@@ -35,8 +34,8 @@ void main() {
       tester.setDisplaySize(const Size(PhotoboothBreakpoints.small, 500));
       await tester.pumpWidget(
         App(
-          authenticationRepository: MockAuthenticationRepository(),
           photosRepository: MockPhotosRepository(),
+          cameraService: MockCameraService(),
         ),
       );
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
@@ -49,8 +48,8 @@ void main() {
     testWidgets('renders LandingPage', (tester) async {
       await tester.pumpWidget(
         App(
-          authenticationRepository: MockAuthenticationRepository(),
           photosRepository: MockPhotosRepository(),
+          cameraService: MockCameraService(),
         ),
       );
       expect(find.byType(LandingPage), findsOneWidget);

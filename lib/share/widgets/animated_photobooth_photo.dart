@@ -47,15 +47,17 @@ class _AnimatedPhotoboothPhotoState extends State<AnimatedPhotoboothPhoto> {
     final aspectRatio = context.select(
       (PhotoboothBloc bloc) => bloc.state.aspectRatio,
     );
-
+    if(widget.image == null) {
+      return const SizedBox();
+    }
     if (aspectRatio <= PhotoboothAspectRatio.portrait) {
       return AnimatedPhotoboothPhotoPortrait(
-        image: widget.image,
+        image: widget.image!,
         isPhotoVisible: _isPhotoVisible,
       );
     } else {
       return AnimatedPhotoboothPhotoLandscape(
-        image: widget.image,
+        image: widget.image!,
         isPhotoVisible: _isPhotoVisible,
       );
     }
@@ -70,7 +72,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     super.key,
   });
 
-  final String? image;
+  final String image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -94,6 +96,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     final scaleX = (double scaleX) => scaleX * 1.34;
 
 
+
     final smallPhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
       image: image,
@@ -115,7 +118,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
       left: left,
       right: right,
       bottom: bottom,
-      scaleX: scaleX(0.37),
+      scaleX: scaleX(0.47),
       scaleY: 0.47,
     );
     final largePhoto = _AnimatedPhotoboothPhoto(
@@ -127,7 +130,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
       left: left,
       right: right,
       bottom: bottom,
-      scaleX: scaleX(0.5),
+      scaleX: scaleX(0.6),
       scaleY: 0.6,
     );
     final xLargePhoto = _AnimatedPhotoboothPhoto(
@@ -139,7 +142,7 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
       left: left,
       right: right,
       bottom: bottom,
-      scaleX: scaleX(0.6),
+      scaleX: scaleX(0.7),
       scaleY: 0.7,
     );
 
@@ -160,7 +163,7 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
     super.key,
   });
 
-  final String? image;
+  final String image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -230,7 +233,7 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
   final AnimatedSprite sprite;
   final bool isPhotoVisible;
   final double aspectRatio;
-  final String? image;
+  final String image;
   final double top;
   final double left;
   final double right;
@@ -241,33 +244,46 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = this.image;
-    return SizedBox(
-      height: sprite.sprites.size.height * scaleY,
-      width: sprite.sprites.size.width * scaleX,
-      child: Stack(
-        fit: StackFit.expand,
+    final newHeight = sprite.sprites.size.height * scaleY;
+    final newInsideHeight = (sprite.sprites.size.height - (top+bottom)) * scaleY;
+    final newWidth = sprite.sprites.size.width * scaleX;
+    final newInsideWidth = (sprite.sprites.size.width - (left+right)) * scaleX;
+    final newTop = (newHeight-newInsideHeight)/2;
+    final newLeft = (newWidth-newInsideWidth)/2;
+    final mediaSize = MediaQuery.of(context).size;
+    final scale = mediaSize.width / newWidth;
+    return 
+      Transform.scale(
+        scale: scale,
+    child:Stack(
+        fit: StackFit.loose,
+        alignment: Alignment.center,
         children: [
-          FittedBox(
-            fit: BoxFit.fill,
-            child: ConstrainedBox(
-              constraints: BoxConstraints.loose(sprite.sprites.size),
+          Transform.scale(
+            scaleX: scaleX,
+            scaleY: scaleY,
+          child: SizedBox(
+            width: sprite.sprites.size.width,
+            height: sprite.sprites.size.height,
               child: sprite,
-            ),
-          ),
-          if (image != null)
-            Positioned(
-              top: top * scaleY,
-              left: left * scaleX,
-              right: right * scaleX,
-              bottom: bottom * scaleY,
+              // width: newWidth,
+              // height: newHeight
+            )),
+            Align(alignment: Alignment(0, -.05),
+            child:SizedBox(
               child: AnimatedOpacity(
                 duration: const Duration(seconds: 2),
                 opacity: isPhotoVisible ? 1 : 0,
                 child: PhotoboothPhoto(image: image)
               ),
-            ),
-        ],
-      ),
-    );
+              // top: newTop,
+              // left: newLeft,
+              width: newInsideWidth,
+              height: newInsideHeight
+            ))
+          ]
+          )
+      )
+      ;
   }
 }

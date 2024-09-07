@@ -14,6 +14,7 @@
     "watch": "tsc-watch"
   },
   "devDependencies": {
+    "@puppeteer/browsers": "^2.4.0",
     "tsc-watch": "^6.2.0",
     "typescript": "^5.5.4"
   }

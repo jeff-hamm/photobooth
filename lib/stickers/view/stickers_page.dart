@@ -26,8 +26,9 @@ class StickersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => StickersBloc(),
-      child: const StickersView(),
-    );
+      child: Scaffold(
+        body: StickersView(),
+    ));
   }
 }
 

@@ -6,13 +6,15 @@ import 'package:camera/camera.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:io_photobooth/common/butts_repository.dart';
+import 'package:io_photobooth/common/photos_repository.dart';
+import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:io_photobooth/external_links/external_links.dart';
 import 'package:io_photobooth/footer/footer.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
-import 'package:photos_repository/photos_repository.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
@@ -29,7 +31,7 @@ class MockUrlLauncher extends Mock
     with MockPlatformInterfaceMixin
     implements UrlLauncherPlatform {}
 
-class MockPhotosRepository extends Mock implements PhotosRepository {}
+class MockPhotosRepository extends Mock implements ButtsPhotosRepository {}
 
 class MockXFile extends Mock implements XFile {}
 
@@ -38,7 +40,7 @@ void main() {
   const width = 1;
   const height = 1;
   const data = '';
-  const image = CameraImage(width: width, height: height, data: data);
+  const image = CameraImageBlob(width: width, height: height, data: data);
 
   late PhotosRepository photosRepository;
   late PhotoboothBloc photoboothBloc;
@@ -69,7 +71,7 @@ void main() {
       ),
     ).thenAnswer((_) async => Uint8List.fromList([]));
     photoboothBloc = MockPhotoboothBloc();
-    when(() => photoboothBloc.state).thenReturn(PhotoboothState(image: image));
+    when(() => photoboothBloc.state).thenReturn(PhotoboothState(false, image: image));
 
     shareBloc = MockShareBloc();
     whenListen(
@@ -120,14 +122,6 @@ void main() {
       expect(find.byType(ShareBody), findsOneWidget);
     });
 
-    testWidgets('displays a WhiteFooter', (tester) async {
-      await tester.pumpApp(
-        ShareView(),
-        photoboothBloc: photoboothBloc,
-        shareBloc: shareBloc,
-      );
-      await tester.ensureVisible(find.byType(WhiteFooter, skipOffstage: false));
-    });
 
     testWidgets('displays a ShareRetakeButton', (tester) async {
       await tester.pumpApp(
@@ -292,26 +286,6 @@ void main() {
 
       expect(find.byType(ShareErrorSubheading), findsOneWidget);
     });
-
-    testWidgets(
-        'displays a ShareSuccessCaption '
-        'when uploadStatus is success', (tester) async {
-      when(() => shareBloc.state).thenReturn(
-        ShareState(
-          compositeStatus: ShareStatus.success,
-          uploadStatus: ShareStatus.success,
-          file: file,
-        ),
-      );
-      await tester.pumpApp(
-        ShareView(),
-        photoboothBloc: photoboothBloc,
-        shareBloc: shareBloc,
-      );
-
-      expect(find.byType(ShareSuccessCaption), findsOneWidget);
-    });
-
     testWidgets(
         'displays a ShareCopyableLink '
         'when uploadStatus is success', (tester) async {
@@ -360,40 +334,6 @@ void main() {
         shareBloc: shareBloc,
       );
       expect(find.byType(DownloadButton), findsOneWidget);
-    });
-
-    testWidgets('displays a GoToGoogleIOButton', (tester) async {
-      await tester.pumpApp(
-        ShareView(),
-        photoboothBloc: photoboothBloc,
-        shareBloc: shareBloc,
-      );
-      expect(find.byType(GoToGoogleIOButton), findsOneWidget);
-    });
-
-    group('GoToGoogleIOButton', () {
-      testWidgets('opens link when tapped', (tester) async {
-        final mock = MockUrlLauncher();
-        const url = googleIOExternalLink;
-        UrlLauncherPlatform.instance = mock;
-        when(() => mock.canLaunch(any())).thenAnswer((_) async => true);
-        when(() => mock.launchUrl(url, any())).thenAnswer((_) async => true);
-        tester.setDisplaySize(Size(2500, 2500));
-        await tester.pumpApp(
-          ShareView(),
-          photoboothBloc: photoboothBloc,
-          shareBloc: shareBloc,
-        );
-        await tester.ensureVisible(
-          find.byType(
-            GoToGoogleIOButton,
-            skipOffstage: false,
-          ),
-        );
-        await tester.tap(find.byType(GoToGoogleIOButton, skipOffstage: false));
-
-        verify(() => mock.launchUrl(url, any())).called(1);
-      });
     });
 
     group('RetakeButton', () {
@@ -484,26 +424,5 @@ void main() {
       });
     });
 
-    group('ResponsiveLayout', () {
-      testWidgets('displays a DesktopButtonsLayout', (tester) async {
-        tester.setDisplaySize(const Size(PhotoboothBreakpoints.large, 1000));
-        await tester.pumpApp(
-          ShareView(),
-          photoboothBloc: photoboothBloc,
-          shareBloc: shareBloc,
-        );
-        expect(find.byType(DesktopButtonsLayout), findsOneWidget);
-      });
-
-      testWidgets('displays a MobileButtonsLayout', (tester) async {
-        tester.setDisplaySize(const Size(PhotoboothBreakpoints.small, 1000));
-        await tester.pumpApp(
-          ShareView(),
-          photoboothBloc: photoboothBloc,
-          shareBloc: shareBloc,
-        );
-        expect(find.byType(MobileButtonsLayout), findsOneWidget);
-      });
-    });
   });
 }

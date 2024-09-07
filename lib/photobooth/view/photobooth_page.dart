@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
-import 'package:io_photobooth/photobooth/view/loading_body.dart';
 import 'package:io_photobooth/stickers/stickers.dart';
 import 'package:photobooth_ui/photobooth_ui.dart';
 import '../../config.dart' as config;
@@ -47,7 +46,6 @@ class PhotoboothView extends StatefulWidget {
 
 class _PhotoboothViewState extends State<PhotoboothView> with WidgetsBindingObserver {
   int seed = Random().nextInt(1<<31);
-  late final Timer timer;
   var _hasSplashShown = false;
   @override
   void initState() {
@@ -57,21 +55,14 @@ class _PhotoboothViewState extends State<PhotoboothView> with WidgetsBindingObse
       displayCameraError(service.value.cameraError!);
     }
     service.addListener(_onCameraServiceChanged);
-//    unawaited(service.initState());
-    timer = Timer(const Duration(seconds: 2), () async {
-      await service.initState();
-      setState(()  {
-        _hasSplashShown = true;
-      });
-    });
-  }
-  @override
-  void dispose() {
-//    final svc = context.read<CameraService>(); 
-    timer.cancel();
-//    unawaited(svc.stop());
-//    unawaited(svc.disposeController());
-    super.dispose();
+    unawaited(service.initState());
+// //    unawaited(service.initState());
+//     timer = Timer(const Duration(seconds: 2), () async {
+//       await service.initState();
+//       setState(()  {
+//         _hasSplashShown = true;
+//       });
+//     });
   }
 
   @override
@@ -146,11 +137,14 @@ class _PhotoboothViewState extends State<PhotoboothView> with WidgetsBindingObse
 
   @override
   Widget build(BuildContext context) {
-    final service = context.read<CameraService>();
-    return  Scaffold(
-      body: AppAnimatedCrossFade(crossFadeState: service.isCameraAvailable && _hasSplashShown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      firstChild: const LoadingBody(), 
-      secondChild: PhotoboothBackgroundStack(
+    final service = context.watch<CameraService>();
+    return  
+    Scaffold(
+      // body: AppAnimatedCrossFade(crossFadeState: service.isCameraAvailable && _hasSplashShown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      // firstChild: const LoadingBody(),
+
+      // secondChild:
+    body: PhotoboothBackgroundStack(
           child: Camera(
             placeholder: (_) => const SizedBox(),
             preview: (context, preview) => PhotoboothPreview(
@@ -162,7 +156,7 @@ class _PhotoboothViewState extends State<PhotoboothView> with WidgetsBindingObse
             error: (context, error) => PhotoboothError(error: error),
           ),
         )
-      )
+//      )
     );
   }
 
@@ -201,15 +195,24 @@ class PhotoboothBackgroundStack extends StatelessWidget {
         fit: StackFit.expand,
       children: [
         const PhotoboothBackground(),
-        Center(
-          child: AspectRatio(
-            aspectRatio: aspectRatio,
-            child: ColoredBox(
-              color: PhotoboothColors.black,
-              child: child,
-            ),
-          ),
-        ),
+        FittedBox(
+    fit: BoxFit.fitWidth,  // This ensures the width is fully covered without stretching.
+    child: SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: child,
+    ),
+  ),
+
+        // Center(
+        //   child: AspectRatio(
+        //     aspectRatio: aspectRatio,
+        //     child: ColoredBox(
+        //       color: PhotoboothColors.black,
+        //       child: child,
+        //     ),
+        //   ),
+        // ),
       ],
       );
     });
