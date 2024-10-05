@@ -90,4 +90,10 @@ class _RotatingWidgetState extends State<RotatingWidget>
       child: widget.child,
     );
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }

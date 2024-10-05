@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class AppTheme {
   static ColorScheme colorScheme = ColorScheme.fromSeed(
     seedColor: primary, secondary: secondary);
-  static const Color primary =Colors.purple;
+  static const Color primary = PhotoboothColors.blue;
   static const Color secondary = green;
   static const Color accent = primary;
 
@@ -14,8 +15,9 @@ class AppTheme {
   static const Radius textBoxCorners = Radius.circular(5);
   static const EdgeInsets textBoxPadding = EdgeInsets.all(10);
 
-  static const double highResLargeTextSize = 42;
-  static const double highResMediumTextSize = 30;
+
+  static const double highResLargeTextSize = 44;
+  static const double highResMediumTextSize = 35;
   static const double highResSmallTextSize = 30;
 
   static const num lowResTextScaleFactor = 0.80;

@@ -14,12 +14,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../../config.dart' as config;
 import '../../app/app.dart';
+
 class RetakeButton extends StatefulWidget {
-  const RetakeButton({
-    this.onCountdownComplete,
-    super.key,
-    this.isStickers=false
-  });
+  const RetakeButton(
+      {this.onCountdownComplete, super.key, this.isStickers = false});
   final bool isStickers;
   final VoidCallback? onCountdownComplete;
 
@@ -34,7 +32,7 @@ class _RetakeButtonState extends State<RetakeButton>
   void _onAnimationStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.dismissed) {
       widget.onCountdownComplete?.call();
-//      final photoboothBloc = 
+//      final photoboothBloc =
 //      context.read<PhotoboothBloc>()
 //        ..add(const PhotoClearAllTapped());
 //      final svc = context.read<CameraService>();
@@ -48,10 +46,11 @@ class _RetakeButtonState extends State<RetakeButton>
 //          .pushNamed("/booth/preview", includePrefixMatches: true);
 //          context.router.maybePop();
 //                  unawaited(context.router.popAndPush(const PhotobothViewRoute()));
-//        context.router.pushAndPopUntil(const PhotobothViewRoute(), 
-  //      predicate: (route) => 
-    //      route.settings.name == PhotoboothRoute.name);
-        AutoRouter.of(context).navigateNamed("/booth/preview", includePrefixMatches: true);
+//        context.router.pushAndPopUntil(const PhotobothViewRoute(),
+      //      predicate: (route) =>
+      //      route.settings.name == PhotoboothRoute.name);
+      AutoRouter.of(context)
+          .navigateNamed("/booth/preview", includePrefixMatches: true);
 //        replaceAll([const PhotobothViewRoute()]);
 //      appRouter.navigateNamed("/", includePrefixMatches: true);
 //       final navigator = Navigator.of(context);
@@ -66,10 +65,11 @@ class _RetakeButtonState extends State<RetakeButton>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: widget.isStickers ? config.TimeoutDuration : config.ShareDuration,
+      duration:
+          widget.isStickers ? config.TimeoutDuration : config.ShareDuration,
       value: 1,
     )..addStatusListener(_onAnimationStatusChanged);
-    controller.reverse(from:1);
+    controller.reverse(from: 1);
   }
 
   @override
@@ -89,104 +89,103 @@ class _RetakeButtonState extends State<RetakeButton>
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        return Column(
-          children:[_RetakeButton(isStickers: widget.isStickers), 
+        return Column(children: [
+          _RetakeButton(isStickers: widget.isStickers),
           CountdownTimer(
-            duration: widget.isStickers ? config.TimeoutDuration : config.ShareDuration,
-            controller: controller)
-          ])
-          ;
+              duration: widget.isStickers
+                  ? config.TimeoutDuration
+                  : config.ShareDuration,
+              controller: controller)
+        ]);
       },
     );
   }
 }
 
 class CountdownTimer extends StatelessWidget {
-  const CountdownTimer({required this.controller, required this.duration, super.key});
+  const CountdownTimer(
+      {required this.controller, required this.duration, super.key});
 
   final Duration duration;
   final AnimationController controller;
 
   @override
   Widget build(BuildContext context) {
-    final seconds =
-        (duration.inSeconds * controller.value).ceil();
+    final seconds = (duration.inSeconds * controller.value).ceil();
     final theme = Theme.of(context);
-    if(seconds > 15) {
+    if (seconds > 15) {
       return const SizedBox();
     }
     var color = PhotoboothColors.green;
-    if(seconds > 5) {
+    if (seconds > 5) {
       color = PhotoboothColors.orange;
-    }
-    else {
+    } else {
       color = PhotoboothColors.red;
     }
     return Container(
 //      height: 40,
 //      width: 70,
 //      margin: const EdgeInsets.only(bottom: 15),
-      child:
-        Column(
-         children: [
-             Text(
-              'Restart in',
-              style: theme.textTheme.displaySmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w500,
-              ),
-              ),
-            Text(
-              '$seconds',
-              style: theme.textTheme.displaySmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w500,
-              ))
-          ]
-      ),
+      child: Column(children: [
+        Text(
+          'Restart in',
+          style: theme.textTheme.displaySmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text('$seconds',
+            style: theme.textTheme.displaySmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ))
+      ]),
     );
   }
 }
 
 class _RetakeButton extends StatelessWidget {
-  const _RetakeButton({super.key,this.isStickers=false,this.onPressed});
+  const _RetakeButton({super.key, this.isStickers = false, this.onPressed});
 
   final VoidCallback? onPressed;
   final bool isStickers;
 
   @override
   Widget build(BuildContext context) {
-
-        final l10n = context.l10n;
-          final navigator = AutoRouter.of(context);
+    final l10n = context.l10n;
+    final navigator = AutoRouter.of(context);
     return AppTooltipButton(
-          key: const Key('sharePage_retake_appTooltipButton'),
-          onPressed: () async {
-            final photoboothBloc = context.read<PhotoboothBloc>();
+      key: const Key('sharePage_retake_appTooltipButton'),
+      onPressed: () async {
+        final photoboothBloc = context.read<PhotoboothBloc>();
 //            final navigator = Navigator.of(context);
-            
-            final confirmed =
-              !isStickers || 
-               (await showAppModal<bool>(
-              context: context,
-              landscapeChild: const _StickersRetakeConfirmationDialogContent(),
-              portraitChild: const _StickersRetakeConfirmationBottomSheet()) ?? false);
 
-            if (confirmed) {
-              photoboothBloc.add(const PhotoClearAllTapped());
-              navigator.replace(const PhotobothViewRoute());
+        final confirmed = !isStickers ||
+            (await showAppModal<bool>(
+                    context: context,
+                    landscapeChild:
+                        const _StickersRetakeConfirmationDialogContent(),
+                    portraitChild:
+                        const _StickersRetakeConfirmationBottomSheet()) ??
+                false);
+
+        if (confirmed) {
+          photoboothBloc.add(const PhotoClearAllTapped());
+          Navigator.of(context).pop(true);
+//          context.maybePop(true);
+//              navigator.replace(const PhotobothViewRoute());
 //              navigator.popUntil((route) => route.isFirst || route.settings.name == PhotobothViewRoute.name);
 //              unawaited(navigator.replaceAll([const PhotobothViewRoute()]));
-      //        unawaited(AutoRouter.of(context).navigate(const PhotobothViewRoute()));
+          //        unawaited(AutoRouter.of(context).navigate(const PhotobothViewRoute()));
 //              unawaited(navigator.pushReplacement(PhotoboothPage.route()));
-            }
-          },
-          message: l10n.retakeButtonTooltip,
-          child: const IconAssetColorSwitcher(
-            'assets/icons/retake_button_icon.png',
-          ),
-        );
-   }
+        }
+      },
+      message: l10n.retakeButtonTooltip,
+      child: const IconAssetColorSwitcher(
+        'assets/icons/retake_button_icon.png',
+      ),
+    );
+  }
 }
 
 class _StickersRetakeConfirmationDialogContent extends StatelessWidget {
@@ -336,7 +335,6 @@ class _ConfirmationBottomSheet extends StatelessWidget {
     );
   }
 }
-
 
 class _StickersRetakeConfirmationBottomSheet extends StatelessWidget {
   const _StickersRetakeConfirmationBottomSheet();

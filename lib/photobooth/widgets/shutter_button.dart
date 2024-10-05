@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
-
+import 'package:io_photobooth/theme_config.dart';
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/common/camera_button.dart';
 import 'package:just_audio/just_audio.dart';
@@ -91,13 +91,16 @@ class CountdownTimer extends StatelessWidget {
     final seconds =
         (config.CountdownDuration.inSeconds * controller.value).ceil();
     final theme = Theme.of(context);
+
     return Container(
-      height: 70,
-      width: 70,
+      height: PhotoboothTheme.standardIconSize + AppTheme.assetIconPadding,
+      width: PhotoboothTheme.standardIconSize + AppTheme.assetIconPadding,
       margin: const EdgeInsets.only(bottom: 15, top: 15),
       child: Stack(
+        alignment: Alignment.center,
+        fit: StackFit.expand,
         children: [
-          Align(
+          Center(
             child: Text(
               '$seconds',
               style: theme.textTheme.displayLarge?.copyWith(

@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/common/buttons/retake_button.dart';
 import 'package:io_photobooth/common/buttons/retake_row.dart';
+import 'package:io_photobooth/common/camera_service.dart';
 import 'package:io_photobooth/common/error_dialog.dart';
 import 'package:io_photobooth/common/models/ImagePath.dart';
 import 'package:io_photobooth/common/widgets.dart';
@@ -128,6 +129,7 @@ class _ImagePickerViewState extends State<ImagePickerView> {
                               }
                               // here returning DefaultDraggableItemWidget. You can also return your custom widget as well.
                               return SelectableDraggableItemWidget(
+                                  controller: controller, 
                                   imageFile: imageFile as ImagePickerFile);
                             },
                             padding: const EdgeInsets.all(20))),
@@ -186,17 +188,21 @@ class ShipItRow extends StatelessWidget {
 class ShipItButton extends StatelessWidget {
   const ShipItButton(
       {required this.controller,
-      this.icon = 'assets/icons/camera_button_icon.png',
+      this.icon = 'assets/icons/flower.png',
       super.key});
   final ImagePickerController controller;
   final String icon;
 
   void onButtonPressed(BuildContext context) {
     final booth = context.read<PhotoboothBloc>();
-    booth.add(UploadImages(controller.imageFiles
+    var toShip = controller.imageFiles
         .where((i) => i.isSelected)
         .map((i) => i.image)
-        .toList()));
+        .toList();
+    if (toShip.isEmpty) {
+      toShip = controller.imageFiles.map((i) => i.image).toList();
+    }
+    booth.add(UploadImages(toShip));
   }
 
   @override
@@ -258,13 +264,19 @@ class RotatingShipIteButton extends StatelessWidget {
           context: context,
         );
         photoboothBloc.add(const PhotoClearAllTapped());
-        navigator.replace(const PhotobothViewRoute());
+        Navigator.of(context).pop();
+        // navigator.maybePop();
+        // context.read<CameraService>().controller!.setDescription(
+        //     context.read<CameraService>().controller!.value!.description);
+//        navigator.replace(const PhotobothViewRoute());
 //      await navigator.navigate(const PhotobothViewRoute());
         return;
       }
 
       photoboothBloc.add(const PhotoClearAllTapped());
-      navigator.popUntilRoot();
+      Navigator.of(context).pop();
+      // navigator.replace(const PhotobothViewRoute());
+      // navigator.popUntilRoot();
 
 //      await navigator.navigate(const PhotobothViewRoute());
     }

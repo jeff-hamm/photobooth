@@ -13,7 +13,9 @@ class AppRouter extends RootStackRouter {
             // }
             ),
         AutoRoute(page: PhotoboothRoute.page, path: "/booth", children: [
-          AutoRoute(page: PhotobothViewRoute.page, path: 'preview'),
+          AutoRoute(page: PhotobothViewRoute.page, path: 'preview', children: [
+            AutoRoute(page: PickerRoute.page, path: 'picker'),
+          ]),
           AutoRoute(page: PickerRoute.page, path: 'picker'),
           AutoRoute(page: StickersRoute.page, path: 'stickers'),
           AutoRoute(page: ShareRoute.page, path: 'share'),

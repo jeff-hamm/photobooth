@@ -104,7 +104,7 @@ class PhotoboothPreview extends StatelessWidget {
                                   child: _AnimatedCharacter(
                                       asset: character.asset)),
                             const DraggableStickers(),
-//              const PhotoApertureOverlay()
+                            const PhotoApertureOverlay()
                           ])
                           //)
                           ,

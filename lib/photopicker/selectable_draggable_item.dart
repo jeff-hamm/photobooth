@@ -6,6 +6,7 @@ import 'package:io_photobooth/common/theme/colors.dart';
 import 'package:io_photobooth/common/widgets.dart';
 import 'package:io_photobooth/config.dart';
 import 'package:io_photobooth/photobooth/bloc/photobooth_bloc.dart';
+import 'package:io_photobooth/photopicker/image_picker_controller.dart';
 import 'package:io_photobooth/photopicker/image_picker_enlarge.dart';
 import 'package:io_photobooth/photopicker/image_picker_file.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
@@ -13,13 +14,14 @@ import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 class SelectableDraggableItemWidget extends StatelessWidget {
   const SelectableDraggableItemWidget(
       {required this.imageFile,
+      required this.controller,
       this.boxDecoration = const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       super.key});
 
   final ImagePickerFile imageFile;
-
+  final ImagePickerController controller;
   final BoxDecoration boxDecoration;
   void _onSelected() {}
 
@@ -27,17 +29,13 @@ class SelectableDraggableItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return 
       InkWell(
         onTap: () {
-                    imageFile.isSelected = !imageFile.isSelected;
-                    context.read<PhotoboothBloc>().add(PhotoSelectToggled(
-                        imageFile!.image,
-                        toggled: imageFile.isSelected));
-        }
+          controller.toggleSelection(imageFile);
+        },
       child: DefaultDraggableItemWidget(
-        imageFile: imageFile,
-      
+          imageFile: imageFile,
         boxDecoration: boxDecoration,
         closeButtonAlignment: Alignment.topLeft,
         fit: BoxFit.cover,
@@ -56,29 +54,7 @@ class SelectableDraggableItemWidget extends StatelessWidget {
         showCloseButton: true,
         closeButtonMargin: const EdgeInsets.all(3),
         closeButtonPadding: const EdgeInsets.all(3),
-      )),
-      // Align(
-      //     alignment: Alignment.bottomCenter,
-      //     child: Row(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         crossAxisAlignment: CrossAxisAlignment.end,
-      //         children: [
-      //           IconButton.filled(
-      //             onPressed: () {
-      //               imageFile.isSelected = !imageFile.isSelected;
-      //               context.read<PhotoboothBloc>().add(PhotoSelectToggled(
-      //                   imageFile!.image,
-      //                   toggled: imageFile.isSelected));
-      //             },
-      //             icon: imageFile.isSelected
-      //                 ? const Icon(Icons.check_rounded, color: AppTheme.green)
-      //                 : IconButton.filled(
-      //                     onPressed: _onCanceled,
-      //                     icon: const Icon(Icons.close_rounded,
-      //                         color: PhotoboothColors.gray)),
-      //           )
-      //         ]))
-    ]);
+        ));
   }
 }
 

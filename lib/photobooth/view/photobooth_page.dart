@@ -17,6 +17,7 @@ import 'package:io_photobooth/common/widgets.dart';
 import 'package:io_photobooth/main.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/common/models/ImagePath.dart';
+import 'package:io_photobooth/photopicker/image_pocker_view.dart';
 import 'package:logger_screen/logger_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -150,11 +151,15 @@ class _PhotoboothViewState extends State<PhotoboothView>
       ..removeListener(_onCameraServiceChanged);
     final photoboothBloc = context.read<PhotoboothBloc>();
     Future<void> navToPusher() async {
-      await context.router.replace(PickerRoute(
-          images: photoboothBloc.state.images
-              .map((m) => ImagePath.from(m))
-              .followedBy(photoboothBloc.state.aiImage)
-              .toList()));
+      await showAppDialog(
+          context: context,
+          child: BlocProvider<PhotoboothBloc>.value(
+              value: photoboothBloc, child: const ImagePickerView()));
+      // context.router.push(PickerRoute(
+      //     images: photoboothBloc.state.images
+      //         .map((m) => ImagePath.from(m))
+      //         .followedBy(photoboothBloc.state.aiImage)
+      //         .toList()));
       //await cameraService.disposeController();
     }
 

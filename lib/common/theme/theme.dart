@@ -45,8 +45,8 @@ class PhotoboothTheme {
       bottomSheetTheme: _bottomSheetTheme,
       tabBarTheme: _tabBarTheme,
       dividerTheme: _dividerTheme,
-      iconButtonTheme: _iconButtonTheme(_standardIconSize),
-      iconTheme: _iconTheme(_standardIconSize), 
+      iconButtonTheme: _iconButtonTheme(standardIconSize),
+      iconTheme: _iconTheme(standardIconSize), 
     );
   }
 
@@ -67,9 +67,9 @@ class PhotoboothTheme {
       iconTheme: _iconTheme(_mediumIconSize)
     );
   }
-  static const double _standardIconSize = 40;
-  static const double _mediumIconSize = 30;
-  static const double _smallIconSize = 20;
+  static const double standardIconSize = 45;
+  static const double _mediumIconSize = 35;
+  static const double _smallIconSize = 25;
 
   static IconButtonThemeData _iconButtonTheme(double iconSize) {
     return IconButtonThemeData( style: ButtonStyle(

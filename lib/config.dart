@@ -6,7 +6,7 @@ export './theme_config.dart';
 
 const CameraResolution=ResolutionPreset.max;
 const CameraImageFormat=ImageFormatGroup.jpeg;
-const TimeoutDuration=Duration(seconds: 360);
+const TimeoutDuration = Duration(seconds: 60);
 const ShareDuration=Duration(hours: 1);
 const NumRandomProps=4;
 const SideIconButtonSizeLandscape = 120.0;
@@ -14,7 +14,7 @@ const SideIconButtonSizePortait = 90.0;
 const InitialCharacterScale = 0.8;
 const MinCharacterScale = 0.1;
 const PickerWidth = 3;
-const int? NumAiImages = null;
+const int? NumAiImages = 2;
 const ShutterDuration = const Duration(milliseconds: 150);
 const IsDebug =
     kDebugMode || const bool.fromEnvironment('IS_DEBUG', defaultValue: false);
