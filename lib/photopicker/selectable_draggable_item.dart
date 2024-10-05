@@ -28,8 +28,16 @@ class SelectableDraggableItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      DefaultDraggableItemWidget(
+      InkWell(
+        onTap: () {
+                    imageFile.isSelected = !imageFile.isSelected;
+                    context.read<PhotoboothBloc>().add(PhotoSelectToggled(
+                        imageFile!.image,
+                        toggled: imageFile.isSelected));
+        }
+      child: DefaultDraggableItemWidget(
         imageFile: imageFile,
+      
         boxDecoration: boxDecoration,
         closeButtonAlignment: Alignment.topLeft,
         fit: BoxFit.cover,
@@ -48,28 +56,28 @@ class SelectableDraggableItemWidget extends StatelessWidget {
         showCloseButton: true,
         closeButtonMargin: const EdgeInsets.all(3),
         closeButtonPadding: const EdgeInsets.all(3),
-      ),
-      Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                IconButton.filled(
-                  onPressed: () {
-                    imageFile.isSelected = !imageFile.isSelected;
-                    context.read<PhotoboothBloc>().add(PhotoSelectToggled(
-                        imageFile!.image,
-                        toggled: imageFile.isSelected));
-                  },
-                  icon: imageFile.isSelected
-                      ? const Icon(Icons.check_rounded, color: AppTheme.green)
-                      : IconButton.filled(
-                          onPressed: _onCanceled,
-                          icon: const Icon(Icons.close_rounded,
-                              color: PhotoboothColors.gray)),
-                )
-              ]))
+      )),
+      // Align(
+      //     alignment: Alignment.bottomCenter,
+      //     child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         crossAxisAlignment: CrossAxisAlignment.end,
+      //         children: [
+      //           IconButton.filled(
+      //             onPressed: () {
+      //               imageFile.isSelected = !imageFile.isSelected;
+      //               context.read<PhotoboothBloc>().add(PhotoSelectToggled(
+      //                   imageFile!.image,
+      //                   toggled: imageFile.isSelected));
+      //             },
+      //             icon: imageFile.isSelected
+      //                 ? const Icon(Icons.check_rounded, color: AppTheme.green)
+      //                 : IconButton.filled(
+      //                     onPressed: _onCanceled,
+      //                     icon: const Icon(Icons.close_rounded,
+      //                         color: PhotoboothColors.gray)),
+      //           )
+      //         ]))
     ]);
   }
 }
