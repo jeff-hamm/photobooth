@@ -1,0 +1,66 @@
+version: '3.4'
+services:
+  nginx:
+    image: nginx:1.15-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; ${NGNIX_CMD:-nginx-debug} -s reload; done & ${NGNIX_CMD:-nginx-debug} -g \"daemon off;\"'"
+    volumes:
+      - ${DATA_VOL:-../data}/nginx:/etc/nginx/conf.d
+      - ${DATA_VOL:-../data}/certbot/conf:/etc/letsencrypt
+      - ${DATA_VOL:-../data}/certbot/www:/var/www/certbot
+  certbot:
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ${DATA_VOL:-../data}/certbot/conf:/etc/letsencrypt
+      - ${DATA_VOL:-../data}/certbot/www:/var/www/certbot
+  dns:
+    restart: always
+    image: strm/dnsmasq
+    privileged: true
+    network_mode: "host"
+    volumes:
+      - ${DATA_VOL:-../data}/dns/dnsmasq.conf:/etc/dnsmasq.conf
+      - c:\windows\system32\drivers\etc\hosts:/etc/hosts
+    ports:
+      - "53:53/udp"
+    cap_add:
+      - NET_ADMIN
+  protobooth:
+    image: butts-prompts
+    env_file: ../ButtsBlazor/protobooth.env
+    volumes:
+      - ${DATA_VOL:-../data}/protobooth/images:/app/wwwroot/butts_images:rw
+      - ${DATA_VOL:-../data}/protobooth/db:/app/db:rw
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+    build:
+      context: ../ButtsBlazor
+      dockerfile: ./ButtsBlazor/Dockerfile
+    ports:
+      - "8080:8080"
+      - "9080:8080"
+    restart: unless-stopped
+  sdxl_gen:
+    image: sdxl_gen
+    environment:
+      - IS_OFFLINE=true
+    build:
+      context: ../worker-sdxl
+      dockerfile: Dockerfile
+      args:
+        - IS_OFFLINE=true
+    volumes:
+      - ${DATA_VOL:-../data}/sdxl_gen:/output:rw
+    ports:
+      - "9000:8000"
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1 # alternatively, use `count: all` for all GPUs
+              capabilities: [ gpu ]
