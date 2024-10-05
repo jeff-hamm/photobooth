@@ -69,7 +69,7 @@ void main() {
       photoboothBloc = MockPhotoboothBloc();
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
-          image: image,
+          mostRecentImage: image,
         ),
       );
     });
@@ -106,7 +106,7 @@ void main() {
     setUp(() {
       photoboothBloc = MockPhotoboothBloc();
       when(() => photoboothBloc.state).thenReturn(
-        PhotoboothState(image: image),
+        PhotoboothState(mostRecentImage: image),
       );
       stickersBloc = MockStickersBloc();
       when(() => stickersBloc.state).thenReturn(StickersState());
@@ -239,7 +239,7 @@ void main() {
             PhotoAsset(id: '0', asset: Assets.props.first),
             PhotoAsset(id: '1', asset: Assets.props.last)
           ],
-          image: image,
+          mostRecentImage: image,
         ),
       );
 
@@ -260,7 +260,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
 
@@ -505,7 +505,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       when(() => stickersBloc.state).thenReturn(
@@ -528,7 +528,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       when(() => stickersBloc.state).thenReturn(
@@ -557,7 +557,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
 
@@ -588,7 +588,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(
@@ -613,7 +613,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
 

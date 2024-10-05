@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class LandingBackground extends StatelessWidget {
   const LandingBackground({super.key});

@@ -5,7 +5,7 @@ import 'package:js/js_util.dart';
 import 'dart:async';
 
 @JS()
-external Gradio get gradio;
+external Gradio get aiGenerator;
 
 @JS()
 class GeneratedImage{

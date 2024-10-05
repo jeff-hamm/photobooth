@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/assets.g.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
+import 'package:io_photobooth/common/theme.dart';
+
 
 class StickersTabs extends StatefulWidget {
   const StickersTabs({
@@ -136,7 +138,7 @@ class _StickersTabState extends State<StickersTab>
         widget.assetPath,
         width: 30,
         height: 30,
-        color: IconTheme.of(context).color,
+        color: PhotoboothColors.accent,
       ),
     );
   }

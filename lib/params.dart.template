@@ -1,6 +1,11 @@
+import 'package:flutter/foundation.dart';
+
+
 const SITE_NAME = "${SITE_NAME}";
 const SITE_DESC = "${SITE_DESC}";
 const ImageServer = "${IMAGE_SERVER}";
 final ShareUrl =  Uri.parse("${IMAGE_SERVER}/api/butts/upload");
 final GradioUrl = "${GRADIO_URL}";
-const CountdownDuration=Duration(seconds: ${COUNTDOWN_SECONDS});
+const CountdownDuration= kDebugMode ? Duration(milliseconds: 250) : Duration(seconds: ${COUNTDOWN_SECONDS});
+const ServerlessEndpoint = "${SERVERLESS_ENDPOINT}";
+const ServerlessToken = "${SERVERLESS_TOKEN}";

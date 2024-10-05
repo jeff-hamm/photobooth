@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
+import 'package:io_photobooth/share/share.dart';
 import 'package:io_photobooth/stickers/stickers.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/image_color_switcher.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ClearStickersButtonLayer extends StatelessWidget {
   const ClearStickersButtonLayer({super.key});
@@ -12,8 +14,9 @@ class ClearStickersButtonLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     final isHidden = context.select(
       (PhotoboothBloc bloc) => bloc.state.stickers.isEmpty,
+    ) && context.select(
+      (ShareBloc bloc) => bloc.state.aiImages?.isEmpty != false,
     );
-
     if (isHidden) return const SizedBox();
     return ClearStickersButton(
       onPressed: () async {
@@ -49,7 +52,7 @@ class ClearStickersButton extends StatelessWidget {
         onPressed: onPressed,
         message: l10n.clearStickersButtonTooltip,
         verticalOffset: 50,
-        child: Image.asset('assets/icons/delete_icon.png', height: 100),
+        child: const IconAssetColorSwitcher('assets/icons/delete_icon.png'),
       ),
     );
   }

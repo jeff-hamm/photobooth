@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/theme.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/stickers/stickers.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class MobileStickersDrawer extends StatelessWidget {
   const MobileStickersDrawer({

@@ -1,4 +1,10 @@
-  import 'package:flutter/foundation.dart';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/models/ImagePath.dart';
+import 'package:io_photobooth/common/utils/prompt.dart';
 import 'package:path/path.dart' as p;
 import 'dart:async';
 import 'dart:typed_data';
@@ -20,23 +26,29 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
   ShareBloc({
     required PhotosRepository photosRepository,
     required this.imageId,
-    required this.image,
+    CameraImageBlob? image,
     required this.assets,
     required this.aspectRatio,
     required this.shareText,
-    required this.aiPrompt,
     String negativePrompt = config.AiNegativePrompt,
     bool isSharingEnabled = const bool.fromEnvironment('SHARING_ENABLED'),
   })  : _photosRepository = photosRepository,
         _isSharingEnabled = isSharingEnabled,
         _negativePrompt = negativePrompt,
+        this.image =
+            image ?? CameraImageBlob(data: imageId, width: 0, height: 0),
         super(const ShareState()) {
     on<ShareViewLoaded>(_onShareViewLoaded);
     on<ShareTapped>(_onShareTapped);
+    on<GenerateAiTapped>(_onGenerateAiTapped);
     on<GenerateAiImageSucceeded>(_onGenerateAiImageSucceeded);
     on<_AiImageUploadSucceeded>(_onAiImageUploadSucceeded);
+    on<_AiImageUploadFailed>(_onAiImageUploadFailed);
+    on<_ShareUploadStarting>(_onShareUploadStarting);
     on<_ShareCompositeSucceeded>(_onShareCompositeSucceeded);
     on<_ShareUploadSucceeded>(_onShareUploadSucceeded);
+    on<GenerateAiImageFailed>(
+        (event, emit) => emit(state.copyWith(aiStatus: ShareStatus.failure)));
     on<_ShareCompositeFailed>(
       (event, emit) => emit(
         state.copyWith(
@@ -54,7 +66,6 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
   final bool _isSharingEnabled;
   final String _negativePrompt;
   final String shareText;
-  final String aiPrompt;
 
   void _onShareViewLoaded(
     ShareViewLoaded event,
@@ -90,13 +101,14 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
 
     if (state.compositeStatus.isLoading) return;
     if (state.uploadStatus.isLoading) return;
-    if (state.uploadStatus.isSuccess) return;
-
-    if (state.compositeStatus.isFailure) {
+    if (state.aiStatus.isLoading) return;
+//    if (state.uploadStatus.isSuccess) return;
+//    if (state.compositeStatus.isFailure) {
       emit(
         state.copyWith(
           compositeStatus: ShareStatus.loading,
           uploadStatus: ShareStatus.initial,
+        aiStatus: ShareStatus.initial,
           isDownloadRequested: false,
           isUploadRequested: true,
           shareUrl: shareUrl,
@@ -109,47 +121,48 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
           onError: (_) => add(const _ShareCompositeFailed()),
         ),
       );
-    } else if (state.compositeStatus.isSuccess) {
-      emit(
-        state.copyWith(
-          uploadStatus: ShareStatus.loading,
-          isDownloadRequested: false,
-          isUploadRequested: true,
-          shareUrl: shareUrl,
-        ),
-      );
+    // } else if (state.compositeStatus.isSuccess) {
+    //   emit(
+    //     state.copyWith(
+    //       uploadStatus: ShareStatus.loading,
+    //       isDownloadRequested: false,
+    //       isUploadRequested: true,
+    //       shareUrl: shareUrl,
+    //     ),
+    //   );
+    //   try {
+    //     add(_ShareUploadStarting(imageId: imageId, shareText: shareText, bytes: state.bytes!));
+    //     final shareUrls = await _photosRepository.sharePhoto(
+    //       imageId: imageId,
+    //       fileName: _getPhotoFileName(imageId),
+    //       data: state.bytes!,
+    //       shareText: shareText,
+    //     );
+    //     emit(
+    //       state.copyWith(
+    //         uploadStatus: ShareStatus.success,
+    //         isDownloadRequested: false,
+    //         isUploadRequested: true,
+    //         file: state.file,
+    //         bytes: state.bytes,
+    //         explicitShareUrl: shareUrls.explicitShareUrl,
+    //         facebookShareUrl: shareUrls.facebookShareUrl,
+    //         twitterShareUrl: shareUrls.twitterShareUrl,
+    //         shareUrl: shareUrl,
+    //       ),
+    //     );
+    //     add(_ShareUploadSucceeded(url: shareUrls.explicitShareUrl));
 
-      try {
-        final shareUrls = await _photosRepository.sharePhoto(
-          fileName: _getPhotoFileName(imageId),
-          data: state.bytes!,
-          shareText: shareText,
-        );
-        emit(
-          state.copyWith(
-            uploadStatus: ShareStatus.success,
-            isDownloadRequested: false,
-            isUploadRequested: true,
-            file: state.file,
-            bytes: state.bytes,
-            explicitShareUrl: shareUrls.explicitShareUrl,
-            facebookShareUrl: shareUrls.facebookShareUrl,
-            twitterShareUrl: shareUrls.twitterShareUrl,
-            shareUrl: shareUrl,
-          ),
-        );
-        add(_ShareUploadSucceeded(url: shareUrls.explicitShareUrl));
-
-      } catch (_) {
-        emit(
-          state.copyWith(
-            uploadStatus: ShareStatus.failure,
-            isDownloadRequested: false,
-            shareUrl: shareUrl,
-          ),
-        );
-      }
-    }
+    //   } catch (_) {
+    //     emit(
+    //       state.copyWith(
+    //         uploadStatus: ShareStatus.failure,
+    //         isDownloadRequested: false,
+    //         shareUrl: shareUrl,
+    //       ),
+    //     );
+    //   }
+//    }
   }
 
   Future<void> _onShareCompositeSucceeded(
@@ -183,7 +196,13 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
       );
 
       try {
+        add(_ShareUploadStarting(
+            imageId: imageId,
+            fileName: _getPhotoFileName(imageId),
+            shareText: shareText,
+            bytes: event.bytes!));
         final shareUrls = await _photosRepository.sharePhoto(
+          imageId: imageId,
           fileName: _getPhotoFileName(imageId),
           data: event.bytes,
           shareText: shareText,
@@ -215,39 +234,57 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
       }
     }
   }
-  Future<void> _onShareUploadSucceeded(_ShareUploadSucceeded event, Emitter<ShareState> emit) async {
-        if(!config.EnableAi) {
-          return;
-        }
-        emit(
-        state.copyWith(
-          aiStatus: ShareStatus.loading,
-          aiPrompt: aiPrompt
-        ),
+  Future<void> _onGenerateAiTapped(
+      GenerateAiTapped event, Emitter<ShareState> emit) async {
+    try {
+      final aiPrompt = event.imageFile.aiPrompt ?? await getRandomPrompt();
+      final aiUrls = await _photosRepository.generateAiPhoto(
+        imageId: event.imageId ?? UniqueKey().toString(),
+        imagePath: event.imageFile,
+        data: event.bytes,
+        prompt: aiPrompt,
+        negative: _negativePrompt,
       );
-      try {
-
-        final aiUrls = await _photosRepository.generateAiPhoto(
-          fileName: event.url,
-          prompt: aiPrompt,
-          negative: _negativePrompt,
-        );
-        if(aiUrls.length == 0) {
-          emit(
-            state.copyWith(
-              aiStatus: ShareStatus.failure,
-            ),
-          );
-          return;
-        }
+      if (aiUrls.length == 0) {
         emit(
           state.copyWith(
-            aiStatus: ShareStatus.success,
-            aiImages: aiUrls,
-            aiPrompt: aiPrompt,
+            aiStatus: ShareStatus.failure,
           ),
         );
-        add(GenerateAiImageSucceeded(imageUrls: aiUrls, aiPrompt: aiPrompt));
+        return;
+      }
+      emit(
+        state.copyWith(
+          aiStatus: ShareStatus.success,
+          aiImages: aiUrls,
+          aiPrompt: aiPrompt,
+        ),
+      );
+      add(GenerateAiImageSucceeded(
+          imageUrls: aiUrls, aiPrompt: await getRandomPrompt()));
+    } catch (e) {
+      log('Error generating AI image: $e');
+      add(const GenerateAiImageFailed());
+      state.copyWith(
+        aiStatus: ShareStatus.failure,
+      );
+    }
+  }
+
+  Future<void> _onShareUploadSucceeded(
+      _ShareUploadSucceeded event, Emitter<ShareState> emit) async {}
+  Future<void> _onShareUploadStarting(
+      _ShareUploadStarting event, Emitter<ShareState> emit) async {
+    if (!config.EnableAi) {
+      return;
+    }
+    emit(
+      state.copyWith(
+          aiStatus: ShareStatus.loading, aiPrompt: await getRandomPrompt()),
+    );
+    try {
+      add(GenerateAiTapped(ImagePath.parse(event.fileName),
+          imageId: event.imageId, bytes: event.bytes));
       } catch (_) {
         emit(
           state.copyWith(
@@ -257,22 +294,33 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
       }
   }
 
+  FutureOr<void> _onAiImageUploadFailed(
+      _AiImageUploadFailed event, Emitter<ShareState> emit) {}
   FutureOr<void> _onAiImageUploadSucceeded(_AiImageUploadSucceeded event, Emitter<ShareState> emit) { 
   }
   FutureOr<void> _onGenerateAiImageSucceeded(GenerateAiImageSucceeded event, Emitter<ShareState> emit) async {
+    if (!config.AiUpload) {
+      return;
+    }
+    try {
     List<String> imageUrls = [];
     for(final image in event.imageUrls) {
-        final ext = p.extension(image);
-        final bytes = (await http.get(Uri.parse(image))).bodyBytes;
-        final fileName= shortHash(UniqueKey()) + ext;
+        final aiImageId = shortHash(UniqueKey()).toString();
+        final fileName = aiImageId + image.fileExtension;
         final reference = this._photosRepository.getFileReference(fileName);
         imageUrls.add(
           this._photosRepository.getSharePhotoUrl(
-            await this._photosRepository.uploadPhoto(reference, bytes)
+            await this
+            ._photosRepository
+            .uploadPhoto(aiImageId, reference, await image.toBytes())
           )
         );
     }
     add(_AiImageUploadSucceeded(imageUrls: imageUrls));
+    } catch (e) {
+      log('Error uploading AI image: $e');
+      add(const _AiImageUploadFailed());
+    }
 
   }
 
@@ -297,7 +345,10 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
     );
     return Uint8List.fromList(composite);
   }
-
-  String _getPhotoFileName(String photoName) => '$photoName.png';
+  static String _getPhotoPath(String imageId) =>
+      imageId.startsWith(RegExp(r'http[s]://'))
+          ? imageId
+          : _getPhotoFileName(imageId);
+  static String _getPhotoFileName(String photoName) => '$photoName.png';
 
 }

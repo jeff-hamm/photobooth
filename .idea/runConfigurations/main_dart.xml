@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="-d chrome --web-renderer html --web-browser-flag &quot;--use-fake-device-for-media-stream&quot; --web-browser-flag &quot;--use-file-for-fake-video-capture=$USER_HOME$/Downloads/sample.mjpeg&quot;" />
+    <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

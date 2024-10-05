@@ -3,7 +3,7 @@ name: photobooth_ui
 on:
   pull_request:
     paths:
-      - "packages/photobooth_ui/**"
+      - "packages/boothbooth_ui/**"
       - ".github/workflows/photobooth_ui.yaml"
 
 jobs:

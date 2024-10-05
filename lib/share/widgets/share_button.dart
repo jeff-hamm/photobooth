@@ -6,21 +6,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 import 'package:platform_helper/platform_helper.dart';
 
 class ShareButton extends StatelessWidget {
   ShareButton({
     required this.image,
-    PlatformHelper? platformHelper,
+//    PlatformHelper? platformHelper,
     super.key,
-  }) : platformHelper = platformHelper ?? PlatformHelper();
+  }); // : platformHelper = platformHelper ?? PlatformHelper();
 
   /// Composited image
   final Uint8List image;
 
   /// Optional [PlatformHelper] instance.
-  final PlatformHelper platformHelper;
+  //final PlatformHelper platformHelper;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class ShareButton extends StatelessWidget {
         );
         showAppModal<void>(
           context: context,
-          platformHelper: platformHelper,
+          //      platformHelper: platformHelper,
           landscapeChild: MultiBlocProvider(
             providers: [
               BlocProvider.value(value: context.read<PhotoboothBloc>()),

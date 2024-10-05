@@ -38,7 +38,7 @@ void main() {
         PhotoboothState(
           characters: const [PhotoAsset(id: '0', asset: Assets.android)],
           stickers: [PhotoAsset(id: '0', asset: Assets.props.first)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(
@@ -60,7 +60,7 @@ void main() {
             PhotoAsset(id: '1', asset: Assets.props.first),
             PhotoAsset(id: '2', asset: Assets.props.last),
           ],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(

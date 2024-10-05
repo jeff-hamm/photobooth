@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/image_color_switcher.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ShareErrorDialog extends StatelessWidget {
   const ShareErrorDialog({super.key});
@@ -34,12 +35,10 @@ class ShareErrorDialog extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      height: 300,
-                      child: Image.asset(
+                      AssetColorSwitcher(
                         'assets/images/error_photo_desktop.png',
+                        height: 300,
                       ),
-                    ),
                     const SizedBox(height: 60),
                     Text(
                       l10n.shareErrorDialogHeading,

@@ -1,18 +1,23 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:io_photobooth/common/retake_button.dart';
-import 'package:io_photobooth/footer/footer.dart';
+import 'package:io_photobooth/app/router.gr.dart';
+import 'package:io_photobooth/common/camera_image_blob.dart';
+import 'package:io_photobooth/common/widgets.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 import '../../common/photos_repository.dart';
 import '../../config.dart' as config;
+@RoutePage()
 class SharePage extends StatelessWidget {
-  const SharePage({super.key});
+  const SharePage({super.key, this.imageId});
 
+  final String? imageId;
   static Route<void> route() {
     return AppPageRoute(builder: (_) => const SharePage());
   }
@@ -20,17 +25,23 @@ class SharePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final photoBloc = context.watch<PhotoboothBloc>();
+    if (photoBloc.state.mostRecentImage == null && imageId == null) {
+      AutoRouter.of(context).replace(const PhotobothViewRoute());
+      return const SizedBox();
+    }
+
     return BlocProvider(
       create: (context) {
-        final state = context.read<PhotoboothBloc>().state;
+        final state = photoBloc!.state;
         return ShareBloc(
           photosRepository: context.read<PhotosRepository>(),
           imageId: state.imageId,
-          image: state.image!,
+          image: CameraImageBlob(
+              data: state.mostRecentImage.path, width: 0, height: 0),
           assets: state.assets,
           aspectRatio: state.aspectRatio,
           shareText: l10n.socialMediaShareLinkText,
-          aiPrompt: config.AiPrompt,
         )..add(const ShareViewLoaded());
       },
       child: const ShareView(),
@@ -51,8 +62,12 @@ class ShareView extends StatelessWidget {
           footer: Container(),
           overlays: [
             _ShareRetakeButton(),
-            ShareProgressOverlay(),
-            
+//            ShareProgressOverlay(),
+            Positioned.fill(
+                child: GestureDetector(
+              onTap: () =>
+                  AutoRouter.of(context).replace(const PhotobothViewRoute()),
+            )),
           ],
         ),
       ),

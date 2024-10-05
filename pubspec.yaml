@@ -10,38 +10,55 @@ environment:
 dependencies:
   analytics:
     path: packages/analytics
-  authentication_repository:
-    path: packages/authentication_repository
+  # authentication_repository:
+  #   path: packages/authentication_repository
+  auto_route: ^9.2.2
+  auto_route_generator: ^9.0.0
   bloc: ^8.1.0
-  build_runner: ^2.4.12
   camera: ^0.11.0+2
   cross_file: ^0.3.3+2
+  drop_shadow_image: ^0.9.1
   equatable: ^2.0.5
-  firebase_auth: ^4.2.9
-  firebase_core: ^2.4.1
-  firebase_storage: ^11.0.10
+  # firebase_auth: ^4.2.9
+  # firebase_core: ^2.4.1
+  # firebase_storage: ^11.0.10
+  flame: ^1.19.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
   flutter_localizations:
     sdk: flutter
+  go_router: ^14.2.7
+  image: 4.2.0
   image_compositor:
     path: packages/image_compositor
   intl: ^0.18.0
   json_annotation: ^4.9.0
   json_serializable: ^6.8.0
   just_audio: ^0.9.31
+  map_diff: ^1.0.1
+  multi_image_picker_view: ^1.1.0
   permission_handler: ^11.3.1
-  photobooth_ui:
-    path: packages/photobooth_ui
-  platform_helper:
-    path: packages/platform_helper
+  platform_helper: ^0.1.0
   qr_flutter: ^4.1.0
   rxdart: ^0.27.7
+  sensors_plus: ^6.0.1
   uuid: ^3.0.7
+  url_launcher: ^6.1.8
+
   very_good_analysis: ^4.0.0+1
+  logger_screen:
+    path: packages/logger_screen
+  full_screen_image_null_safe: ^2.0.0
+  zoom_hover_pinch_image: ^1.0.3
+  crop_image: ^1.0.13
+  cross_file_image: ^1.1.0
+  pull_to_refresh: ^2.0.0
+
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
+  build_runner: ^2.4.12
   bloc_test: ^9.1.0
   flutter_test:
     sdk: flutter
@@ -55,11 +72,18 @@ dependency_overrides:
   intl: ^0.18.0
 
 flutter:
+  fonts:
+    - family: Playfair
+      fonts:
+      - asset: assets/fonts/PlayfairDisplay.ttf
+      - asset: assets/fonts/PlayfairDisplay-Italic.ttf
+        style: italic
   uses-material-design: true
   generate: true
   assets:
     - assets/audio/
     - assets/backgrounds/
+    - assets/file/
     - assets/images/
     - assets/icons/
     - assets/props/custom/
@@ -67,3 +91,4 @@ flutter:
     - assets/props/eyewear/
     - assets/props/food/
     - assets/props/shapes/
+ 

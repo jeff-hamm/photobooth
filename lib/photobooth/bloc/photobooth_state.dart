@@ -1,6 +1,7 @@
 part of 'photobooth_bloc.dart';
 
 const emptyAssetId = '';
+const emptyImage = '';
 
 class PhotoConstraint extends Equatable {
   const PhotoConstraint({this.width = 1, this.height = 1});
@@ -13,7 +14,7 @@ class PhotoConstraint extends Equatable {
 }
 
 class PhotoAssetSize extends Equatable {
-  const PhotoAssetSize({this.width = 1, this.height = 1});
+  const PhotoAssetSize({this.width = 2, this.height = 2});
 
   final double width;
   final double height;
@@ -71,16 +72,25 @@ class PhotoAsset extends Equatable {
 }
 
 class PhotoboothState extends Equatable {
-  const PhotoboothState(
-    this.isPrimaryClient,{
+  PhotoboothState(
+    this.isPrimaryClient, {
     this.characters = const <PhotoAsset>[],
     this.stickers = const <PhotoAsset>[],
     this.selectedAssetId = emptyAssetId,
     this.aspectRatio = PhotoboothAspectRatio.portrait,
-    this.image,
-    this.imageId = '',
-  });
-
+    this.images = const [],
+    this.mostRecentImage = ImagePath.empty,
+    String? imageId,
+    List<ImagePath>? aiImage,
+    this.isInPhotoStream = false,
+    this.generationQueue = 0,
+    this.aiQueue = const [],
+    this.generatingAiImage,
+    this.aiGeneratingStatus = ShareStatus.initial,
+    this.imageUploadStatus = ShareStatus.initial,
+  })  : imageId = imageId ?? shortHash(UniqueKey()),
+        aiImage = aiImage ?? [];
+  int generationQueue;
   bool get isDashSelected => characters.containsAsset(named: 'dash');
   bool isSelected(String name) => stickers.containsAsset(named: name);
 
@@ -93,42 +103,75 @@ class PhotoboothState extends Equatable {
   bool get isAnyCharacterSelected => characters.isNotEmpty;
 
   List<PhotoAsset> get assets => characters + stickers;
-  
+  final ImagePath? generatingAiImage;
+  final List<ImagePath> aiQueue;
   final bool isPrimaryClient;
   final double aspectRatio;
-  final CameraImageBlob? image;
+  final List<CameraImageBlob> images;
+  final ImagePath mostRecentImage;
   final String imageId;
   final List<PhotoAsset> characters;
   final List<PhotoAsset> stickers;
   final String selectedAssetId;
+  final List<ImagePath> aiImage;
+  final bool isInPhotoStream;
+
+  ImagePath get selectedImage => !mostRecentImage.isEmpty
+      ? mostRecentImage
+      : (images.isNotEmpty ? images[0].path : ImagePath.empty);
 
   @override
   List<Object?> get props => [
         aspectRatio,
-        image,
+        images,
+        mostRecentImage,
         imageId,
         characters,
         stickers,
         selectedAssetId,
+        aiImage,
+        isInPhotoStream,
+        generatingAiImage,
+        aiGeneratingStatus,
+        imageUploadStatus
       ];
 
+  bool get isGeneratingAi => generatingAiImage?.isNotEmpty == true;
+  final ShareStatus aiGeneratingStatus;
+
+  final ShareStatus imageUploadStatus;
   PhotoboothState copyWith({
     double? aspectRatio,
-    CameraImageBlob? image,
-    String? imageId,
+    List<CameraImageBlob>? images,
+    ImagePath? mostRecentImage,
     List<PhotoAsset>? characters,
     List<PhotoAsset>? stickers,
     String? selectedAssetId,
     bool? isPrimaryClient,
+    String? imageId,
+    List<ImagePath>? aiImage,
+    bool? isCapturingPhotoSet,
+    List<ImagePath>? aiQueue,
+    ImagePath? generatingAiImage,
+    ShareStatus? aiGeneratingStatus,
+    ShareStatus? imageUploadStatus,
+
   }) {
     return PhotoboothState(
       isPrimaryClient ?? this.isPrimaryClient,
       aspectRatio: aspectRatio ?? this.aspectRatio,
-      image: image ?? this.image,
+      mostRecentImage: mostRecentImage ?? this.mostRecentImage,
+      images: images ?? this.images,
       imageId: imageId ?? this.imageId,
       characters: characters ?? this.characters,
       stickers: stickers ?? this.stickers,
       selectedAssetId: selectedAssetId ?? this.selectedAssetId,
+      aiImage: aiImage ?? this.aiImage,
+      isInPhotoStream: isCapturingPhotoSet ?? this.isInPhotoStream,
+      aiQueue: aiQueue ?? this.aiQueue,
+      generatingAiImage: generatingAiImage ?? this.generatingAiImage,
+      aiGeneratingStatus: aiGeneratingStatus ?? this.aiGeneratingStatus,
+      imageUploadStatus: imageUploadStatus ?? this.imageUploadStatus,
     );
   }
 }

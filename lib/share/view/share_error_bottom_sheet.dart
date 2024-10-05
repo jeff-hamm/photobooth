@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/image_color_switcher.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ShareErrorBottomSheet extends StatelessWidget {
   const ShareErrorBottomSheet({super.key});
@@ -24,7 +25,7 @@ class ShareErrorBottomSheet extends StatelessWidget {
                 const SizedBox(height: 32),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 58),
-                  child: Image.asset(
+                  child: AssetColorSwitcher(
                     'assets/images/error_photo_mobile.png',
                   ),
                 ),

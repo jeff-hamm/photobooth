@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/booth_background_image.dart';
 
 class PhotoboothBackground extends StatelessWidget {
   const PhotoboothBackground({super.key});
@@ -9,12 +12,7 @@ class PhotoboothBackground extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(
-          'assets/backgrounds/photobooth_background.jpg',
-          repeat: ImageRepeat.repeatY,
-          fit: BoxFit.cover,
-          filterQuality: FilterQuality.high,
-        ),
+        const BoothBackgroundImage(),
         // Positioned(
         //   left: 50,
         //   bottom: size.height * 0.2,

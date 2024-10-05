@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class SharePreviewPhoto extends StatelessWidget {
   const SharePreviewPhoto({required this.image, super.key});

@@ -37,7 +37,7 @@ void main() {
 
   setUp(() {
     photoboothBloc = MockPhotoboothBloc();
-    when(() => photoboothBloc.state).thenReturn(PhotoboothState(image: image));
+    when(() => photoboothBloc.state).thenReturn(PhotoboothState(mostRecentImage: image));
     platformHelper = MockPlatformHelper();
   });
 

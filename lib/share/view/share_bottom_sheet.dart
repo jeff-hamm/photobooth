@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
+import 'package:io_photobooth/share/widgets/facebook_button.dart';
 
 class ShareBottomSheet extends StatelessWidget {
   const ShareBottomSheet({
@@ -54,13 +55,10 @@ class ShareBottomSheet extends StatelessWidget {
                   const SizedBox(height: 42),
                   const Column(
                     children: [
-                      TwitterButton(),
                       SizedBox(height: 18),
                       FacebookButton(),
                     ],
                   ),
-                  const SizedBox(height: 42),
-                  const SocialMediaShareClarificationNote(),
                 ],
               ),
             ),

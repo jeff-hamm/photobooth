@@ -1,7 +1,10 @@
+import 'package:drop_shadow_image/drop_shadow_image.dart';
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/booth_background_image.dart';
+import 'package:io_photobooth/common/buttons/retake_row.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/landing/landing.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/theme/theme.dart';
 
 class LoadingBody extends StatelessWidget {
   const LoadingBody({super.key});
@@ -16,12 +19,7 @@ class LoadingBody extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         const LandingBackground(),
-        Image.asset(
-          'assets/backgrounds/photobooth_background.jpg',
-          repeat: ImageRepeat.repeatY,
-          fit: BoxFit.cover,
-          filterQuality: FilterQuality.high,
-        ),
+        const BoothBackgroundImage(),
        Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
@@ -43,16 +41,24 @@ class LoadingBody extends StatelessWidget {
               const SizedBox(height: 48),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48),
-              child: Image.asset(
+              child: DropShadowImage(
+                offset: Offset(10,10),
+            scale: 1,
+            blurRadius: 10,
+            borderRadius: 10,
+            image: Image.asset(
                 'assets/backgrounds/landing_background.jpg',
                 height: size.width <= PhotoboothBreakpoints.small
                     ? size.height * 0.4
                     : size.height * 0.5,
               ),
-            ),
+              
+             ),
+            )
           ],
         )
-    )
+    ),
+                  const ActionsRow(retakeButton: false,),
     ]
     );
   }

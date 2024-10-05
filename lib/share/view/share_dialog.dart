@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
+import 'package:io_photobooth/share/widgets/facebook_button.dart';
 
 class ShareDialog extends StatelessWidget {
   const ShareDialog({required this.image, super.key});
@@ -57,13 +58,10 @@ class ShareDialog extends StatelessWidget {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TwitterButton(),
                         SizedBox(width: 36),
                         FacebookButton(),
                       ],
                     ),
-                    const SizedBox(height: 30),
-                    const SocialMediaShareClarificationNote(),
                   ],
                 ),
               ),

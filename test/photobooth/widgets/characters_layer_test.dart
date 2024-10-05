@@ -37,7 +37,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           characters: const [PhotoAsset(id: '0', asset: Assets.android)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(
@@ -54,7 +54,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           characters: const [PhotoAsset(id: '0', asset: Assets.dash)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(
@@ -71,7 +71,7 @@ void main() {
       when(() => photoboothBloc.state).thenReturn(
         PhotoboothState(
           characters: const [PhotoAsset(id: '0', asset: Assets.sparky)],
-          image: image,
+          mostRecentImage: image,
         ),
       );
       await tester.pumpApp(

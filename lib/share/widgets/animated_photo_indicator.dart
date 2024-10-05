@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 const _size = Size(173, 163);
 

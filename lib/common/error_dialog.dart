@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/image_color_switcher.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ErrorDialog extends StatelessWidget {
   const ErrorDialog({super.key,this.text,this.title});
@@ -34,11 +35,9 @@ class ErrorDialog extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
+                    Image.asset(
                       height: 300,
-                      child: Image.asset(
-                        'assets/images/error_photo_desktop.png',
-                      ),
+                      'assets/images/error_photo_desktop.png',
                     ),
                     const SizedBox(height: 60),
                     Text(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ClearStickersCancelButton extends StatelessWidget {
   const ClearStickersCancelButton({super.key});

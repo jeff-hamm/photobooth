@@ -30,7 +30,7 @@ class ShareState extends Equatable {
   final ShareStatus compositeStatus;
   final ShareStatus uploadStatus;
   final ShareStatus aiStatus;
-  final List<String>? aiImages;
+  final List<ImagePath>? aiImages;
   final XFile? file;
   final Uint8List? bytes;
   final String explicitShareUrl;
@@ -68,7 +68,7 @@ class ShareState extends Equatable {
     bool? isDownloadRequested,
     ShareUrl? shareUrl,
     ShareStatus? aiStatus,
-    List<String>? aiImages,
+    List<ImagePath>? aiImages,
     String? aiPrompt
   }) {
     return ShareState(

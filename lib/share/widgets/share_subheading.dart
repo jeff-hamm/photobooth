@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:io_photobooth/external_links/external_links.dart';
+import 'package:io_photobooth/common/theme.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 class ShareSubheading extends StatelessWidget {
   const ShareSubheading({super.key});

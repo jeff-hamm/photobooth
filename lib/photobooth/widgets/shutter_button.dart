@@ -2,20 +2,25 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:io_photobooth/l10n/l10n.dart';
+import 'package:io_photobooth/common/camera_button.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
-import '../../config.dart' as config;
+import 'package:io_photobooth/common/widgets.dart';
 
+import '../../config.dart' as config;
 
 class ShutterButton extends StatefulWidget {
   const ShutterButton({
     required this.onCountdownComplete,
+    required this.onAllPhotosComplete,
+    this.onPressed,
+    this.photosPerPress = 1,
     super.key,
     ValueGetter<AudioPlayer>? audioPlayer,
   });
-
-  final VoidCallback onCountdownComplete;
+  final int photosPerPress;
+  final VoidCallback? onPressed;
+  final Future<void> Function() onCountdownComplete;
+  final VoidCallback onAllPhotosComplete;
 
   @override
   State<ShutterButton> createState() => _ShutterButtonState();
@@ -25,15 +30,24 @@ class _ShutterButtonState extends State<ShutterButton>
     with TickerProviderStateMixin {
   late final AnimationController controller;
 
-  void _onAnimationStatusChanged(AnimationStatus status) {
+  Future<void> _onAnimationStatusChanged(AnimationStatus status) async {
     if (status == AnimationStatus.dismissed) {
-      widget.onCountdownComplete();
+      await widget.onCountdownComplete();
+      await Future.delayed(const Duration(milliseconds: 300));
+      photoCount++;
+      if (photoCount < widget.photosPerPress) {
+        unawaited(controller.reverse(from: 1));
+      } else {
+        widget.onAllPhotosComplete();
+      }
     }
   }
 
+  int photoCount = 0;
   @override
   void initState() {
     super.initState();
+    photoCount = 0;
     controller = AnimationController(
       vsync: this,
       duration: config.CountdownDuration,
@@ -49,6 +63,8 @@ class _ShutterButtonState extends State<ShutterButton>
   }
 
   Future<void> _onShutterPressed() async {
+    photoCount = 0;
+    widget.onPressed?.call();
     unawaited(controller.reverse(from: 1));
   }
 
@@ -78,7 +94,7 @@ class CountdownTimer extends StatelessWidget {
     return Container(
       height: 70,
       width: 70,
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 15, top: 15),
       child: Stack(
         children: [
           Align(
@@ -96,35 +112,6 @@ class CountdownTimer extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
-  }
-}
-
-class CameraButton extends StatelessWidget {
-  const CameraButton({required this.onPressed, this.icon='assets/icons/camera_button_icon.png', super.key});
-
-  final VoidCallback onPressed;
-  final String icon;
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Semantics(
-      focusable: true,
-      button: true,
-      label: l10n.shutterButtonLabelText,
-      child: Material(
-        clipBehavior: Clip.hardEdge,
-        shape: const CircleBorder(),
-        color: PhotoboothColors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          child: Image.asset(
-            this.icon,
-            height: 100,
-            width: 100,
-          ),
-        ),
       ),
     );
   }

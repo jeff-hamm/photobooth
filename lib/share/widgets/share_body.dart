@@ -4,12 +4,11 @@ import 'package:analytics/analytics.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:io_photobooth/common/retake_button.dart';
-import 'package:io_photobooth/external_links/external_links.dart';
+import 'package:io_photobooth/common/theme.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class ShareBody extends StatelessWidget {
@@ -17,7 +16,7 @@ class ShareBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = context.select((PhotoboothBloc bloc) => bloc.state.image);
+    final image = context.select((PhotoboothBloc bloc) => bloc.state.mostRecentImage);
     final file = context.select((ShareBloc bloc) => bloc.state.file);
     final compositeStatus = context.select(
       (ShareBloc bloc) => bloc.state.compositeStatus,
@@ -37,7 +36,11 @@ class ShareBody extends StatelessWidget {
     final aiImages = context.select((ShareBloc bloc) => bloc.state.aiImages);
     final aiPrompt = context.select((ShareBloc bloc) => bloc.state.aiPrompt);
     final mediaSize = MediaQuery.of(context).size;
-    final aspectRatio = image != null && image.height > 0 ? image.width / image.height : mediaSize.aspectRatio;
+    final aspectRatio = PhotoboothAspectRatio.landscape;
+
+    // image != null && 
+
+    //   image.height > 0 ? image.width / image.height : mediaSize.aspectRatio;
     return 
     // Padding(
     //   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -53,7 +56,7 @@ class ShareBody extends StatelessWidget {
       width: mediaSize.width,
       height: mediaSize.height,
           child: AspectRatio(aspectRatio: aspectRatio,
-    child: AnimatedPhotoboothPhoto(image: image?.data),
+    child: AnimatedPhotoboothPhoto(image: image),
     ))),
           if (compositeStatus.isSuccess)
             AnimatedFadeIn(

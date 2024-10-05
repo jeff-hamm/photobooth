@@ -1,18 +1,23 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:io_photobooth/common/retake_button.dart';
-import 'package:io_photobooth/footer/footer.dart';
+import 'package:io_photobooth/app/router.gr.dart';
+import 'package:io_photobooth/common/camera_image_blob.dart';
+import 'package:io_photobooth/common/photos_repository.dart';
+import 'package:io_photobooth/common/widgets.dart';
+import 'package:io_photobooth/config.dart' as config;
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
 import 'package:io_photobooth/share/share.dart';
 import 'package:io_photobooth/stickers/stickers.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
-
+import 'package:io_photobooth/stickers/widgets/preview_image.dart';
+import 'package:io_photobooth/stickers/widgets/regenerate_ai_button.dart';
 const _initialStickerScale = 0.25;
 const _minStickerScale = 0.05;
 
+@RoutePage()
 class StickersPage extends StatelessWidget {
   const StickersPage({
     super.key,
@@ -24,11 +29,26 @@ class StickersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final photoBloc = context.read<PhotoboothBloc>();
     return BlocProvider(
       create: (_) => StickersBloc(),
+        child: BlocProvider(
+            create: (_) {
+              final l10n = context.l10n;
+              final state = photoBloc!.state;
+              return ShareBloc(
+                  photosRepository: context.read<PhotosRepository>(),
+                  imageId: state.imageId,
+                  image: CameraImageBlob(
+                      data: state.mostRecentImage.path, width: 0, height: 0),
+                  assets: state.assets,
+                  aspectRatio: state.aspectRatio,
+                  shareText: context.l10n.socialMediaShareLinkText,
+                  isSharingEnabled: true);
+            },
       child: Scaffold(
         body: StickersView(),
-    ));
+            )));
   }
 }
 
@@ -37,18 +57,22 @@ class StickersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<PhotoboothBloc>().state;
-    final image = state.image;
+//    final image = context.watch<PhotoboothBloc>().state.selectedImage;
+    if (context.read<PhotoboothBloc>().state.selectedImage == emptyImage) {
+      AutoRouter.of(context).replace(const PhotobothViewRoute());
+      return const SizedBox();
+    }
+
     return Stack(
       
       children: [PhotoboothBackgroundStack(
-        child:Stack(
+        child: Stack(
                 fit: StackFit.expand,
                 children: [
                   const Positioned.fill(
                     child: ColoredBox(color: PhotoboothColors.gray),
                   ),
-                  if (image != null) PreviewImage(data: image.data),
+            const PreviewAiImage(),
                   const CharactersLayer(),
                   const DraggableStickers(),
                   const Positioned(
@@ -72,13 +96,15 @@ class StickersView extends StatelessWidget {
                       },
                     ),
                   ),
-                  const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 30),
-                      child: _NextButton(),
-                    ),
-                  ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [_NextButton(), RegenerateAiButton()])),
+            ),
                   const Align(
                     alignment: Alignment.bottomCenter,
                     child: _StickerReminderText(),
@@ -90,6 +116,7 @@ class StickersView extends StatelessWidget {
                   const StickersDrawerLayer()]);
   }
 }
+
 
 class _StickerReminderText extends StatelessWidget {
   const _StickerReminderText();
@@ -166,6 +193,7 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final navigation = AutoRouter.of(context);
     return Semantics(
       focusable: true,
       button: true,
@@ -177,19 +205,22 @@ class _NextButton extends StatelessWidget {
         child: InkWell(
           key: const Key('stickersPage_next_inkWell'),
           onTap: () async {
-            final navigator = Navigator.of(context);
+//            final navigator = Navigator.of(context);
             final confirmed = await showAppModal<bool>(
               context: context,
               landscapeChild: const _NextConfirmationDialogContent(),
               portraitChild: const _NextConfirmationBottomSheet(),
             );
             if (confirmed ?? false) {
-              unawaited(navigator.pushReplacement(SharePage.route()));
+              unawaited(navigation.replace(ShareRoute()));
+//                AutoRouter.of(context).replace(ShareRoute());
+//              context.pushReplacement("/share");
+//              context.go("/share");
+//              unawaited(navigator.pushReplacement(SharePage.route()));
             }
           },
-          child: Image.asset(
+          child: IconAssetColorSwitcher(
             'assets/icons/go_next_button_icon.png',
-            height: 100,
           ),
         ),
       ),
@@ -331,9 +362,8 @@ class _OpenStickersButtonState extends State<OpenStickersButton> {
         },
         message: l10n.openStickersTooltip,
         verticalOffset: 50,
-        child: Image.asset(
-          'assets/icons/stickers_button_icon.png',
-          height: 100,
+            child:
+                IconAssetColorSwitcher('assets/icons/stickers_button_icon.png'
         ),
       ),
     ));

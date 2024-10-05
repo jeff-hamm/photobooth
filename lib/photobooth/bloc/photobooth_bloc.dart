@@ -1,12 +1,23 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_compositor/image_compositor.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/models/ImagePath.dart';
+import 'package:io_photobooth/common/photos_repository.dart';
+import 'package:io_photobooth/common/utils/prompt.dart';
+import 'package:io_photobooth/common/widgets.dart';
+import 'package:io_photobooth/main.dart';
+import 'package:io_photobooth/share/share.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/material.dart';
-import 'dart:typed_data';
+
+import '../../config.dart' as config;
 
 part 'photobooth_event.dart';
 part 'photobooth_state.dart';
@@ -16,8 +27,14 @@ typedef UuidGetter = String Function();
 const _debounceDuration = Duration(milliseconds: 16);
 
 class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
-  PhotoboothBloc(UuidGetter? uuid,{bool isPrimaryClient=false})
-      : this.uuid=uuid??const Uuid().v4, super(PhotoboothState(isPrimaryClient)) {
+  PhotoboothBloc(UuidGetter? uuid,
+      {required this.photosRepository,
+      bool isLockedClient = false,
+      bool? isDebugClient})
+      : this.uuid = uuid ?? const Uuid().v4,
+        this.isDebugClient =
+            isDebugClient == true || kDebugMode || config.IsDebug,
+        super(PhotoboothState(isLockedClient)) {
     EventTransformer<E> debounce<E extends PhotoboothEvent>() =>
         (Stream<E> events, EventMapper<E> mapper) =>
             events.debounceTime(_debounceDuration).asyncExpand(mapper);
@@ -30,18 +47,25 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
       _onPhotoStickerDragged,
       transformer: debounce(),
     );
+    on<PhotoSetCaptureStarted>(_onPhotoSetCaptureStarted);
+    on<PhotoSetCaptureCompleted>(_onPhotoSetCaptureCompleted);
     on<PhotoCaptured>(_onPhotoCaptured);
+    on<AiPhotoRequested>(_onAiPhotoRequested);
+    on<GenerateAiPhotoBoothSucceeded>(_onAiPhotoGenerated);
     on<PhotoCharacterToggled>(_onPhotoCharacterToggled);
     on<PhotoStickerTapped>(_onPhotoStickerTapped);
     on<PhotoClearStickersTapped>(_onPhotoClearStickersTapped);
     on<PhotoClearAllTapped>(_onPhotoClearAllTapped);
     on<PhotoDeleteSelectedStickerTapped>(_onPhotoDeleteSelectedStickerTapped);
     on<PhotoTapped>(_onPhotoTapped);
+    on<PhotoSelectToggled>(_onPhotoSelected);
     on<OrientationChanged>(_onOrientationChanged);
+    on<UploadImages>(_onUploadImages);
   }
-
+  final PhotosRepository photosRepository;
   final UuidGetter uuid;
-  void _onOrientationChanged(OrientationChanged event, Emitter<PhotoboothState> emit) {
+  void _onOrientationChanged(
+      OrientationChanged event, Emitter<PhotoboothState> emit) {
     emit(
       state.copyWith(
         aspectRatio: event.orientation == Orientation.landscape
@@ -51,15 +75,96 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     );
   }
 
+  void _onAiPhotoGenerated(
+      GenerateAiPhotoBoothSucceeded event, Emitter<PhotoboothState> emit) {
+    if (event.imageUrls.isEmpty) {
+      return;
+    }
+    emit(
+      state.copyWith(aiImage: [event.imageUrls.first]),
+    );
+  }
+
+  void _onPhotoSetCaptureStarted(
+      PhotoSetCaptureStarted event, Emitter<PhotoboothState> emit) {
+    emit(state.copyWith(isCapturingPhotoSet: true));
+  }
+
+  void _onPhotoSetCaptureCompleted(
+      PhotoSetCaptureCompleted event, Emitter<PhotoboothState> emit) {
+    emit(state.copyWith(isCapturingPhotoSet: false));
+  }
+
+  bool isGeneratingAi = false;
+
+  final bool isDebugClient;
+  FutureOr<void> _onAiPhotoRequested(
+      AiPhotoRequested event, Emitter<PhotoboothState> emit) async {
+    if (isGeneratingAi) {
+      return;
+    }
+
+    isGeneratingAi = true;
+    try {
+      final toGenerate = state.aiQueue
+          .where((e) => e.imageId == event.image.imageId)
+          .firstOrNull;
+      if (toGenerate == null) {
+        return;
+      }
+      state.aiQueue.removeAt(0);
+
+      emit(
+        state.copyWith(
+            generatingAiImage: toGenerate,
+            aiQueue: state.aiQueue,
+            aiGeneratingStatus: ShareStatus.loading),
+      );
+      final aiUrls = await photosRepository.generateAiPhoto(
+        imageId: event.image.imageId,
+        imagePath: event.image,
+//      data:  event.,
+        prompt: await getRandomPrompt(),
+        negative: config.AiNegativePrompt,
+      );
+      emit(
+        state.copyWith(
+            //images: state.images,
+            aiImage: state.aiImage + aiUrls,
+            generatingAiImage: aiUrls.first,
+            aiGeneratingStatus: ShareStatus.success),
+      );
+    } catch (e) {
+      errorHandler.onError('Error generating AI image: $e');
+      emit(state.copyWith(
+        aiGeneratingStatus: ShareStatus.failure,
+      ));
+      // add(const GenerateAiImageFailed());
+      // state.copyWith(
+      //   aiStatus: ShareStatus.failure,
+      // );
+    } finally {
+      isGeneratingAi = false;
+      if ((config.NumAiImages != null &&
+              state.aiImage.length < config.NumAiImages!) ||
+          state.aiImage.length < state.images.length) {
+        add(AiPhotoRequested(state.aiQueue.first));
+      }
+    }
+  }
+
   void _onPhotoCaptured(PhotoCaptured event, Emitter<PhotoboothState> emit) {
     emit(
       state.copyWith(
         aspectRatio: event.aspectRatio,
-        image: event.image,
-        imageId: uuid(),
+        images: state.images + [event.image],
+        aiQueue: state.aiQueue + [event.image.path],
+//        mostRecentImage: event.image,
+        imageId: shortHash(UniqueKey()),
         selectedAssetId: emptyAssetId,
       ),
     );
+    add(AiPhotoRequested(event.image.path));
   }
 
   void _onPhotoCharacterToggled(
@@ -176,9 +281,10 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
   ) {
     emit(
       state.copyWith(
-        stickers: const <PhotoAsset>[],
-        selectedAssetId: emptyAssetId,
-      ),
+          characters: const <PhotoAsset>[],
+          stickers: const <PhotoAsset>[],
+          selectedAssetId: emptyAssetId,
+          aiImage: [ImagePath.empty]),
     );
   }
 
@@ -188,9 +294,18 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
   ) {
     emit(
       state.copyWith(
+        aiGeneratingStatus: ShareStatus.initial,
+        aiQueue: [],
+        imageUploadStatus: ShareStatus.initial,
+        isCapturingPhotoSet: false,
+        imageId: UniqueKey().toString(),
+        generatingAiImage: null,
         characters: const <PhotoAsset>[],
         stickers: const <PhotoAsset>[],
         selectedAssetId: emptyAssetId,
+        images: <CameraImageBlob>[],
+        aiImage: <ImagePath>[],
+        mostRecentImage: ImagePath.empty,
       ),
     );
   }
@@ -217,9 +332,78 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     );
   }
 
+  void _onPhotoSelected(
+      PhotoSelectToggled event, Emitter<PhotoboothState> emit) {
+    emit(
+      state.copyWith(
+          mostRecentImage:
+              state.images.firstWhere((e) => e.data == event.image)?.path ??
+                  state.aiImage.firstWhere((e) => e.path == event.image)),
+    );
+  }
+
   void _onPhotoTapped(PhotoTapped event, Emitter<PhotoboothState> emit) {
     emit(
       state.copyWith(selectedAssetId: emptyAssetId),
     );
   }
+
+  FutureOr<void> _onUploadImages(
+      UploadImages event, Emitter<PhotoboothState> emit) async {
+    emit(
+      state.copyWith(imageUploadStatus: ShareStatus.loading),
+    );
+    try {
+      for (final image in event.images) {
+        final bytes = await _composite(image, PhotoboothAspectRatio.landscape);
+        final file = XFile.fromData(
+          bytes,
+          mimeType: 'image/png',
+          name: _getPhotoFileName(image.imageId),
+        );
+
+        final shareUrls = await photosRepository.sharePhoto(
+          imageId: image.imageId,
+          fileName: _getPhotoFileName(image.imageId),
+          data: bytes,
+          shareText: image.aiPrompt ?? '',
+        );
+      }
+      emit(
+        state.copyWith(imageUploadStatus: ShareStatus.success),
+      );
+    } catch (e) {
+      errorHandler.onError('Error uploading image: ${e}');
+      emit(
+        state.copyWith(imageUploadStatus: ShareStatus.failure),
+      );
+    } finally {}
+  }
+
+  Future<Uint8List> _composite(ImagePath image, double aspectRatio) async {
+    final composite = await photosRepository.composite(
+      aspectRatio: aspectRatio,
+      data: image,
+      width: image.width!.toInt(),
+      height: image.height!.toInt(),
+      layers: [
+        ...state.assets.map(
+          (l) => CompositeLayer(
+            angle: l.angle,
+            assetPath: 'assets/${l.asset.path}',
+            constraints: Vector2D(l.constraint.width, l.constraint.height),
+            position: Vector2D(l.position.dx, l.position.dy),
+            size: Vector2D(l.size.width, l.size.height),
+          ),
+        )
+      ],
+    );
+    return Uint8List.fromList(composite);
+  }
+
+  String _getPhotoPath(String imageId) =>
+      imageId.startsWith(RegExp(r'http[s]://'))
+          ? imageId
+          : _getPhotoFileName(imageId);
+  String _getPhotoFileName(String photoName) => '$photoName.png';
 }

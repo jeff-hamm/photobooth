@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:analytics/analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
@@ -16,7 +17,9 @@ class LandingTakePhotoButton extends StatelessWidget {
           action: 'click-start-photobooth',
           label: 'start-photobooth',
         );
-        Navigator.of(context).push(PhotoboothPage.route());
+                AutoRouter.of(context).pushNamed("/booth");
+
+//        context.go("/booth");
       },
       child: Text(l10n.landingPageTakePhotoButtonText),
     );

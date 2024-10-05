@@ -1,10 +1,10 @@
 {
     "@@locale": "en",
-    "landingPageHeading": "Welcome to Joceyln & Steven's Mystical Photo Booth",
+    "landingPageHeading": "Welcome to Protobooth - Mystical Forest!",
     "@landingPageHeading": {
         "description": "Heading shown on the landing page."
     },
-    "landingPageSubheading": "Take a photo in the Mystical Booth! Click 'Allow' to take a photo!",
+    "landingPageSubheading": "Take a photo in the photo-proto-booth! Click 'Allow' to take a photo!",
     "@landingPageSubheading": {
         "description": "Subheading shown on the landing page."
     },

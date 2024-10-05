@@ -71,7 +71,7 @@ void main() {
       ),
     ).thenAnswer((_) async => Uint8List.fromList([]));
     photoboothBloc = MockPhotoboothBloc();
-    when(() => photoboothBloc.state).thenReturn(PhotoboothState(false, image: image));
+    when(() => photoboothBloc.state).thenReturn(PhotoboothState(false, mostRecentImage: image));
 
     shareBloc = MockShareBloc();
     whenListen(

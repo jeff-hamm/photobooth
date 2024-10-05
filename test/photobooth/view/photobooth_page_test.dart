@@ -219,7 +219,7 @@ void main() {
         () => cameraPlatform.takePicture(cameraId),
       ).thenAnswer((_) async => image);
       when(() => photoboothBloc.state).thenReturn(
-        PhotoboothState(image: image),
+        PhotoboothState(mostRecentImage: image),
       );
 
       await tester.pumpApp(PhotoboothView(), photoboothBloc: photoboothBloc);
@@ -229,7 +229,7 @@ void main() {
         find.byType(PhotoboothPreview),
       );
 
-      photoboothPreview.onSnapPressed();
+      photoboothPreview.onTakePhoto();
 
       await tester.pumpAndSettle();
 
@@ -269,7 +269,7 @@ void main() {
         () => cameraPlatform.takePicture(cameraId),
       ).thenAnswer((_) async => image);
       when(() => photoboothBloc.state).thenReturn(
-        PhotoboothState(image: image),
+        PhotoboothState(mostRecentImage: image),
       );
 
       await tester.pumpApp(PhotoboothView(), photoboothBloc: photoboothBloc);
@@ -279,7 +279,7 @@ void main() {
         find.byType(PhotoboothPreview),
       );
 
-      photoboothPreview.onSnapPressed();
+      photoboothPreview.onTakePhoto();
 
       await tester.pumpAndSettle();
       verify(
@@ -306,7 +306,7 @@ void main() {
         () => cameraPlatform.takePicture(cameraId),
       ).thenAnswer((_) async => image);
       when(() => photoboothBloc.state).thenReturn(
-        PhotoboothState(image: image),
+        PhotoboothState(mostRecentImage: image),
       );
 
       await tester.pumpApp(PhotoboothView(), photoboothBloc: photoboothBloc);
@@ -316,7 +316,7 @@ void main() {
         find.byType(PhotoboothPreview),
       );
 
-      photoboothPreview.onSnapPressed();
+      photoboothPreview.onTakePhoto();
 
       await tester.pumpAndSettle();
 
@@ -341,7 +341,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -357,7 +357,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -372,7 +372,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -391,7 +391,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -416,7 +416,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -445,7 +445,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -468,7 +468,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -498,7 +498,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -523,7 +523,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -549,7 +549,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -584,7 +584,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();
@@ -607,7 +607,7 @@ void main() {
           value: photoboothBloc,
           child: PhotoboothPreview(
             preview: preview,
-            onSnapPressed: () {},
+            onTakePhoto: () {},
           ),
         ),
       );
@@ -624,7 +624,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -638,7 +638,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -663,7 +663,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -688,7 +688,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -713,7 +713,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -736,7 +736,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -759,7 +759,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -779,7 +779,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: photoboothBloc,
-          child: PhotoboothPreview(preview: preview, onSnapPressed: () {}),
+          child: PhotoboothPreview(preview: preview, onTakePhoto: () {}),
         ),
       );
       await tester.pump();

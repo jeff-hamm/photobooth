@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 const _backgroundColor = Color(0xFFF1F3F4);
 const _textColor = Color(0xFF80858A);

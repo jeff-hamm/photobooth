@@ -4,8 +4,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
+import 'package:io_photobooth/common/theme.dart';
 import 'package:io_photobooth/photobooth/photobooth.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/models/ImagePath.dart';
+import 'package:io_photobooth/common/widgets.dart';
 
 
 class AnimatedPhotoboothPhoto extends StatefulWidget {
@@ -14,7 +16,7 @@ class AnimatedPhotoboothPhoto extends StatefulWidget {
     super.key,
   });
 
-  final String? image;
+  final ImagePath? image;
 
   @override
   State<AnimatedPhotoboothPhoto> createState() =>
@@ -52,12 +54,10 @@ class _AnimatedPhotoboothPhotoState extends State<AnimatedPhotoboothPhoto> {
     }
     if (aspectRatio <= PhotoboothAspectRatio.portrait) {
       return AnimatedPhotoboothPhotoPortrait(
-        image: widget.image!,
         isPhotoVisible: _isPhotoVisible,
       );
     } else {
       return AnimatedPhotoboothPhotoLandscape(
-        image: widget.image!,
         isPhotoVisible: _isPhotoVisible,
       );
     }
@@ -67,12 +67,10 @@ class _AnimatedPhotoboothPhotoState extends State<AnimatedPhotoboothPhoto> {
 @visibleForTesting
 class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
   const AnimatedPhotoboothPhotoLandscape({
-    required this.image,
     required this.isPhotoVisible,
     super.key,
   });
 
-  final String image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -99,7 +97,6 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
 
     final smallPhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -111,7 +108,6 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     );
     final mediumPhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -123,7 +119,6 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     );
     final largePhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -135,7 +130,6 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
     );
     final xLargePhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -158,12 +152,10 @@ class AnimatedPhotoboothPhotoLandscape extends StatelessWidget {
 @visibleForTesting
 class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
   const AnimatedPhotoboothPhotoPortrait({
-    required this.image,
     required this.isPhotoVisible,
     super.key,
   });
 
-  final String image;
   final bool isPhotoVisible;
 
   static const sprite = AnimatedSprite(
@@ -187,7 +179,6 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
     final scaleY = (double scaleX) => scaleX * 1.34;
     final smallPhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -199,7 +190,6 @@ class AnimatedPhotoboothPhotoPortrait extends StatelessWidget {
     );
     final largePhoto = _AnimatedPhotoboothPhoto(
       aspectRatio: aspectRatio,
-      image: image,
       isPhotoVisible: isPhotoVisible,
       sprite: sprite,
       top: top,
@@ -221,7 +211,6 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
     required this.sprite,
     required this.isPhotoVisible,
     required this.aspectRatio,
-    required this.image,
     this.top = 0.0,
     this.left = 0.0,
     this.right = 0.0,
@@ -233,7 +222,6 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
   final AnimatedSprite sprite;
   final bool isPhotoVisible;
   final double aspectRatio;
-  final String image;
   final double top;
   final double left;
   final double right;
@@ -243,7 +231,6 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = this.image;
     final newHeight = sprite.sprites.size.height * scaleY;
     final newInsideHeight = (sprite.sprites.size.height - (top+bottom)) * scaleY;
     final newWidth = sprite.sprites.size.width * scaleX;
@@ -274,7 +261,7 @@ class _AnimatedPhotoboothPhoto extends StatelessWidget {
               child: AnimatedOpacity(
                 duration: const Duration(seconds: 2),
                 opacity: isPhotoVisible ? 1 : 0,
-                child: PhotoboothPhoto(image: image)
+                child: PhotoboothPhoto()
               ),
               // top: newTop,
               // left: newLeft,

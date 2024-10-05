@@ -21,12 +21,14 @@ $GradioPath="$PSScriptRoot\web\js\$GradioImport"
 mkdir $GradioPath -ErrorAction SilentlyContinue
 cp "$PSScriptRoot\node_modules\$GradioImport\index.js*" "$GradioPath" -Force
 npm run tsc
-if($Compile -or $Push){
-    flutter build web
-    if($Push){
-        mkdir "..\ButtsBlazor\ButtsBlazor\wwwroot\photobooth\" -Force
-        cp -Recurse  .\build\web\* "..\ButtsBlazor\ButtsBlazor\wwwroot\photobooth\" -Force
-        pushd "..\ButtsBlazor"
+dart run build_runner build --delete-conflicting-outputs
+
+if ($Compile -or $Push) {   
+    flutter build web --no-web-resources-cdn
+    if ($Push) {
+        mkdir "..\ButtsBlazor\ButtsBlazor\wwwroot\booth\" -Force
+        cp -Recurse  .\build\web\* "..\ButtsBlazor\ButtsBlazor\wwwroot\booth\" -Force
+        pushd "..\deploy"
         try {
             ./push.ps1
         }

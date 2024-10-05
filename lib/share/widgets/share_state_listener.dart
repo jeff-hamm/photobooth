@@ -1,22 +1,23 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:io_photobooth/share/share.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
+import 'package:io_photobooth/common/widgets.dart';
 import 'package:platform_helper/platform_helper.dart';
 
 class ShareStateListener extends StatelessWidget {
   ShareStateListener({
     required this.child,
     super.key,
-    PlatformHelper? platformHelper,
-  }) : platformHelper = platformHelper ?? PlatformHelper();
+//    PlatformHelper? platformHelper,
+  }); // : platformHelper = platformHelper ?? PlatformHelper();
 
   final Widget child;
 
   /// Optional [PlatformHelper] instance.
-  final PlatformHelper platformHelper;
+  //final PlatformHelper platformHelper;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class ShareStateListener extends StatelessWidget {
     if (state.uploadStatus.isFailure) {
       _onShareError(context, state);
     } else if (state.uploadStatus.isSuccess) {
-      _onShareSuccess(context, state);
+      log("Share sucess! ${state.uploadStatus}");
     }
     if(state.aiStatus.isSuccess) {
       _onAiSuccess(context,state);
@@ -39,7 +40,7 @@ class ShareStateListener extends StatelessWidget {
 
   void _onShareError(BuildContext context, ShareState state) {
     showAppModal<void>(
-      platformHelper: platformHelper,
+      //  platformHelper: platformHelper,
       context: context,
       portraitChild: const ShareErrorBottomSheet(),
       landscapeChild: const ShareErrorDialog(),
@@ -69,21 +70,11 @@ class ShareStateListener extends StatelessWidget {
       )
       ));
     showAppModal<void>(
-      platformHelper: platformHelper,
+//      platformHelper: platformHelper,
       context: context,
       portraitChild: w,
       landscapeChild: w,
     );
   }
 
-  void _onShareSuccess(BuildContext context, ShareState state) {
-    if(state.shareUrl == ShareUrl.none){
-      return;
-    }
-    openLink(
-      state.shareUrl == ShareUrl.twitter
-          ? state.twitterShareUrl
-          : state.facebookShareUrl,
-    );
-  }
 }

@@ -21,20 +21,20 @@ output_metadata () {
 echo "// GENERATED CODE - DO NOT MODIFY BY HAND"
 echo ""
 echo "import 'package:flutter/widgets.dart';"
-echo "import 'package:photobooth_ui/photobooth_ui.dart';"
+echo "import 'package:io_photobooth/common/widgets.dart';"
 echo ""
 echo "class Assets {"
 
-characters=("android.png" "dash.png" "dino.png" "sparky.png")
+# characters=("android.png" "dash.png" "dino.png" "sparky.png")
 
-for character in "${characters[@]}"
-do
-    path="assets/images/$character"
-    width=$(identify -format "%w" "$path" | tail -n1 | cut -d" " -f4)
-    height=$(identify -format "%h" "$path" | tail -n1 | cut -d" " -f4)    
-    name=$(basename "${path%.*}")
-    echo "  static const $name = Asset(name: '$name', path: '$path', size: Size($width, $height),);"
-done
+# for character in "${characters[@]}"
+# do
+#     path="assets/images/$character"
+#     width=$(identify -format "%w" "$path" | tail -n1 | cut -d" " -f4)
+#     height=$(identify -format "%h" "$path" | tail -n1 | cut -d" " -f4)    
+#     name=$(basename "${path%.*}")
+#     echo "  static const $name = Asset(name: '$name', path: '$path', size: Size($width, $height),);"
+# done
 
 echo "  static const characters = {"
 
@@ -130,5 +130,5 @@ echo "  };"
 
 echo "  static const props = {...customProps, ...eyewearProps, ...hatProps, ...foodProps, ...shapeProps};"
 echo "  "
-echo "  static const randomProps = {...customProps, ...characters};"
+echo "  static const randomProps = {...customProps};"
 echo "}"

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:io_photobooth/main.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
@@ -9,12 +10,22 @@ class AppBlocObserver extends BlocObserver {
     Transition<dynamic, dynamic> transition,
   ) {
     super.onTransition(bloc, transition);
-    log('onTransition(${bloc.runtimeType}, $transition)');
+    final message = 'onTransition(${bloc.runtimeType}, $transition)';
+    // log(message);
+    // errorHandler.onDebug(message);
+  }
+
+  @override
+  void onEvent(Bloc<dynamic, dynamic> bloc, Object? event) {
+    super.onEvent(bloc, event);
+    final message = 'onEvent(${bloc.runtimeType}, $event)';
+    errorHandler.onDebug(message);
   }
 
   @override
   void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {
-    log('onError(${bloc.runtimeType}, $error, $stackTrace)');
-    super.onError(bloc, error, stackTrace);
+    final message = 'onError(${bloc.runtimeType}, $error, $stackTrace)';
+    log(message);
+    errorHandler.onError(message);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_compositor/image_compositor.dart';
+import 'package:io_photobooth/common/models/ImagePath.dart';
 import '../config.dart' as config;
 /// {@template upload_photo_exception}
 /// Exception thrown when upload photo operation failed.
@@ -56,52 +56,58 @@ class ShareUrls {
   final String twitterShareUrl;
 }
 
-class FirebasePhotosRepository extends PhotosRepository<Reference> {
-  FirebasePhotosRepository({
-    required FirebaseStorage firebaseStorage,
-    super.imageCompositor,
-  })  : _firebaseStorage = firebaseStorage;
-  final FirebaseStorage _firebaseStorage;
-  Reference getFileReference(String fileName) {
-        try {
-        return _firebaseStorage.ref('uploads/$fileName');
-        } catch (e, st) {
-      throw UploadPhotoException(
-        'Uploading photo $fileName failed. '
-        "Couldn't get storage reference 'uploads/$fileName'.\n"
-        'Error: $e. StackTrace: $st',
-      );
-    }
+// class FirebasePhotosRepository extends PhotosRepository<Reference> {
+//   FirebasePhotosRepository({
+//     required FirebaseStorage firebaseStorage,
+//     super.imageCompositor,
+//   })  : _firebaseStorage = firebaseStorage;
+//   final FirebaseStorage _firebaseStorage;
+//   Reference getFileReference(String fileName) {
+//         try {
+//         return _firebaseStorage.ref('uploads/$fileName');
+//         } catch (e, st) {
+//       throw UploadPhotoException(
+//         'Uploading photo $fileName failed. '
+//         "Couldn't get storage reference 'uploads/$fileName'.\n"
+//         'Error: $e. StackTrace: $st',
+//       );
+//     }
 
-  }
+//   }
   
-  Future<bool> photoExists(Reference reference) async {
-    try {
-      await reference.getDownloadURL();
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
+//   Future<bool> photoExists(Reference reference) async {
+//     try {
+//       await reference.getDownloadURL();
+//       return true;
+//     } catch (_) {
+//       return false;
+//     }
+//   }
   
-  Future<Reference> uploadPhoto(Reference reference, Uint8List data) async {
-    try {
-      return (await reference.putData(data)).ref;
-    } catch (e, st) {
-      throw UploadPhotoException(
-        'Uploading photo failed. '
-        'Error: $e. StackTrace: $st',
-      );
-    }
-  }
-    String getSharePhotoUrl(Reference ref) => '${config.ShareUrl}/${ref.name}';
+//   Future<Reference> uploadPhoto(String imageid, Reference reference, Uint8List data) async {
+//     try {
+//       return (await reference.putData(data)).ref;
+//     } catch (e, st) {
+//       throw UploadPhotoException(
+//         'Uploading photo failed. '
+//         'Error: $e. StackTrace: $st',
+//       );
+//     }
+//   }
+//     String getSharePhotoUrl(Reference ref) => '${config.ShareUrl}/${ref.name}';
     
-      @override
-      Future<List<String>> generateAiPhoto({required Reference fileName, required String prompt, required String negative}) {
-        return Future.value([]);
-      }
+//       @override
+//       Future<List<String>> generateAiPhoto(
+//         {    required String imageId,
+//     required Reference fileName,
+//     required Uint8List data,
+//     required String prompt,
+//     required String negative,
+// }) {
+//         return Future.value([]);
+//       }
 
-}
+// }
 
 /// {@template photos_repository}
 /// Repository that persists photos in a Firebase Storage.
@@ -118,6 +124,7 @@ abstract class PhotosRepository<TReference> {
   /// Uploads photo to the [FirebaseStorage] if it doesn't already exist
   /// and returns [ShareUrls].
   Future<ShareUrls> sharePhoto({
+    required String imageId,
     required String fileName,
     required Uint8List data,
     required String shareText,
@@ -131,7 +138,7 @@ abstract class PhotosRepository<TReference> {
         twitterShareUrl: _twitterShareUrl(reference, shareText),
       );
     }
-    final r2 = await uploadPhoto(reference, data);
+    final r2 = await uploadPhoto(imageId, reference, data);
 
     return ShareUrls(
       explicitShareUrl: getSharePhotoUrl(r2),
@@ -140,10 +147,12 @@ abstract class PhotosRepository<TReference> {
     );
   }
 
-  Future<List<String>> generateAiPhoto({
-    required TReference fileName,
+  Future<List<ImagePath>> generateAiPhoto({
+    required TReference imagePath,
     required String prompt,
     required String negative,
+    String? imageId,
+    Uint8List? data,
   });
 
   /// Given an image ([data]) with the provided [layers]
@@ -153,13 +162,13 @@ abstract class PhotosRepository<TReference> {
   Future<Uint8List> composite({
     required int width,
     required int height,
-    required String data,
+    required ImagePath data,
     required List<CompositeLayer> layers,
     required double aspectRatio,
   }) async {
     try {
       final image = await _imageCompositor.composite(
-        data: data,
+        data: data.path,
         width: width,
         height: height,
         layers: layers.map((l) => l.toJson()).toList(),
@@ -176,7 +185,8 @@ abstract class PhotosRepository<TReference> {
 
   Future<bool> photoExists(TReference reference);
 
-  Future<TReference> uploadPhoto(TReference reference, Uint8List data);
+  Future<TReference> uploadPhoto(
+      String imageId, TReference reference, Uint8List data);
   String _twitterShareUrl(TReference ref, String shareText) {
     final encodedShareText = Uri.encodeComponent(shareText);
     return 'https://twitter.com/intent/tweet?url=${getSharePhotoUrl(ref)}&text=';

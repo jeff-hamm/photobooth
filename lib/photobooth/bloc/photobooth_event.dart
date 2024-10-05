@@ -1,11 +1,28 @@
 part of 'photobooth_bloc.dart';
 
-
 abstract class PhotoboothEvent extends Equatable {
   const PhotoboothEvent();
 
   @override
   List<Object> get props => [];
+}
+
+class PhotoSetCaptureStarted extends PhotoboothEvent {
+  const PhotoSetCaptureStarted();
+}
+
+class PhotoSetCaptureCompleted extends PhotoboothEvent {
+  const PhotoSetCaptureCompleted();
+}
+
+class AiPhotoRequested extends PhotoboothEvent {
+  const AiPhotoRequested(this.image);
+  final ImagePath image;
+}
+
+class UploadImages extends PhotoboothEvent {
+  const UploadImages(this.images);
+  final List<ImagePath> images;
 }
 
 class PhotoCaptured extends PhotoboothEvent {
@@ -46,6 +63,13 @@ class PhotoStickerTapped extends PhotoboothEvent {
   List<Object> get props => [sticker];
 }
 
+class GenerateAiPhotoBoothSucceeded extends PhotoboothEvent {
+  const GenerateAiPhotoBoothSucceeded(
+      {required this.imageUrls, required this.aiPrompt});
+  final String aiPrompt;
+  final List<ImagePath> imageUrls;
+}
+
 class PhotoStickerDragged extends PhotoboothEvent {
   const PhotoStickerDragged({required this.sticker, required this.update});
 
@@ -70,6 +94,12 @@ class PhotoDeleteSelectedStickerTapped extends PhotoboothEvent {
 
 class PhotoTapped extends PhotoboothEvent {
   const PhotoTapped();
+}
+
+class PhotoSelectToggled extends PhotoboothEvent {
+  const PhotoSelectToggled(this.image, {this.toggled});
+  final ImagePath image;
+  final bool? toggled;
 }
 
 class OrientationChanged extends PhotoboothEvent {

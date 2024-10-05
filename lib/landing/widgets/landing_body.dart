@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:io_photobooth/common/theme/theme.dart';
 import 'package:io_photobooth/l10n/l10n.dart';
 import 'package:io_photobooth/landing/landing.dart';
-import 'package:photobooth_ui/photobooth_ui.dart';
 
 class LandingBody extends StatelessWidget {
   const LandingBody({super.key});
