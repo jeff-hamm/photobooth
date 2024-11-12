@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:io_photobooth/common/butts_repository.dart';
+import 'package:io_photobooth/params.dart';
 export './params.dart';
 export './theme_config.dart';
 
@@ -37,3 +38,7 @@ final AiUpload = const bool.hasEnvironment('AI_UPLOAD')
 final PhotosPerPress = const bool.hasEnvironment('PHOTOS_PER_PRESS')
     ? const int.fromEnvironment('PHOTOS_PER_PRESS')
     : 3;
+final EnableCharacters = const bool.fromEnvironment('ENABLE_CHARACTERS',
+    defaultValue: EnablePropsDefault);
+final EnableStickers = const bool.fromEnvironment('ENABLE_STICKERS',
+    defaultValue: EnablePropsDefault);

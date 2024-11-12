@@ -312,7 +312,7 @@ class ShareBloc extends Bloc<ShareEvent, ShareState> {
           this._photosRepository.getSharePhotoUrl(
             await this
             ._photosRepository
-            .uploadPhoto(aiImageId, reference, await image.toBytes())
+            .uploadPhoto(aiImageId, reference, await image.toBytes(), null)
           )
         );
     }

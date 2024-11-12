@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:io_photobooth/common/models/ImagePath.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../config.dart' as cofig;
+import '../../../config.dart' as cofig;
 
 part 'serverless.g.dart';
 
@@ -21,8 +21,6 @@ class ImageResult {
   factory ImageResult.fromJson(Map<String, dynamic> json) =>
       _$ImageResultFromJson(json);
 }
-
-
 
 @JsonSerializable(checked: true)
 class RunpodResponse {

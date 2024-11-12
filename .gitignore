@@ -131,3 +131,14 @@ app.*.map.json
 !.idea/runConfigurations/
 node_modules/
 web/js
+**/*.pem
+**/*.safetensors
+wget-log*
+build_resolvers/*
+chrome-device/*
+flutter_build/*
+flutter_gen/*
+pub/*
+data/sdxl_gen/**/*
+data/protobooth/**/*
+**/*.db

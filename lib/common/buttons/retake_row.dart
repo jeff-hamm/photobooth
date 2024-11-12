@@ -10,10 +10,12 @@ class ActionsRow extends StatelessWidget {
   const ActionsRow(
       {this.retakeButton = true,
       this.sendItButton = false,
+      this.refreshButton = true,
       this.showLogsButton = config.IsDebug,
       super.key});
 
   final bool retakeButton;
+  final bool refreshButton;
   final bool showLogsButton;
   final bool sendItButton;
 
@@ -27,6 +29,7 @@ class ActionsRow extends StatelessWidget {
       top: 15,
       child: Row(
         children: [
+          if (retakeButton) const RefreshButton(isStickers: true),
           if (retakeButton) const RetakeButton(isStickers: true),
           if (showLogsButton) const ShowLogsButton(),
         ],

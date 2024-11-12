@@ -21,8 +21,9 @@ class AiPhotoRequested extends PhotoboothEvent {
 }
 
 class UploadImages extends PhotoboothEvent {
-  const UploadImages(this.images);
+  const UploadImages(this.images, {this.imageType});
   final List<ImagePath> images;
+  final ImageType? imageType;
 }
 
 class PhotoCaptured extends PhotoboothEvent {

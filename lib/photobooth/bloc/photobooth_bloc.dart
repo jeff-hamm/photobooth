@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_compositor/image_compositor.dart';
+import 'package:io_photobooth/common/butts_repository.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:io_photobooth/common/models/ImagePath.dart';
 import 'package:io_photobooth/common/photos_repository.dart';
@@ -153,7 +154,8 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     }
   }
 
-  void _onPhotoCaptured(PhotoCaptured event, Emitter<PhotoboothState> emit) {
+  void _onPhotoCaptured(
+      PhotoCaptured event, Emitter<PhotoboothState> emit) async {
     emit(
       state.copyWith(
         aspectRatio: event.aspectRatio,
@@ -165,6 +167,7 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
       ),
     );
     add(AiPhotoRequested(event.image.path));
+    await uploadImage(event.image.path, ImageType.upload);
   }
 
   void _onPhotoCharacterToggled(
@@ -355,19 +358,7 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     );
     try {
       for (final image in event.images) {
-        final bytes = await _composite(image, PhotoboothAspectRatio.landscape);
-        final file = XFile.fromData(
-          bytes,
-          mimeType: 'image/png',
-          name: _getPhotoFileName(image.imageId),
-        );
-
-        final shareUrls = await photosRepository.sharePhoto(
-          imageId: image.imageId,
-          fileName: _getPhotoFileName(image.imageId),
-          data: bytes,
-          shareText: image.aiPrompt ?? '',
-        );
+        await uploadImage(image, event.imageType);
       }
       emit(
         state.copyWith(imageUploadStatus: ShareStatus.success),
@@ -380,7 +371,27 @@ class PhotoboothBloc extends Bloc<PhotoboothEvent, PhotoboothState> {
     } finally {}
   }
 
+  Future<void> uploadImage(ImagePath image, ImageType? imageType) async {
+    final bytes = await _composite(image, PhotoboothAspectRatio.landscape);
+    final file = XFile.fromData(
+      bytes,
+      mimeType: 'image/png',
+      name: _getPhotoFileName(image.imageId),
+    );
+
+    final shareUrls = await photosRepository.sharePhoto(
+        imageId: image.imageId,
+        fileName: _getPhotoFileName(image.imageId),
+        data: bytes,
+        shareText: image.aiPrompt ?? '',
+        imageType: imageType
+    );
+  }
+
   Future<Uint8List> _composite(ImagePath image, double aspectRatio) async {
+    if (image.isDataUrl) {
+      return await image.toBytes();
+    }
     final composite = await photosRepository.composite(
       aspectRatio: aspectRatio,
       data: image,

@@ -10,6 +10,7 @@ import 'package:io_photobooth/app/router.gr.dart';
 import 'package:io_photobooth/common/buttons/retake_row.dart';
 import 'package:io_photobooth/common/camera_image_blob.dart';
 import 'package:io_photobooth/common/camera_service.dart';
+import 'package:io_photobooth/common/full_dialog.dart';
 import 'package:io_photobooth/common/photos_repository.dart';
 import 'package:io_photobooth/common/theme.dart';
 import 'package:io_photobooth/common/utils/logger_screen_wrapper.dart';
@@ -145,27 +146,20 @@ class _PhotoboothViewState extends State<PhotoboothView>
   Future<void> _onFlipPressed() async {
     await context.read<CameraService>().flipCamera();
   }
-
-  void _onPhotosComplete() {
+  bool picking = false;
+  void _onPhotosComplete() async {
     final cameraService = context.read<CameraService>()
       ..removeListener(_onCameraServiceChanged);
     final photoboothBloc = context.read<PhotoboothBloc>();
-    Future<void> navToPusher() async {
-      await showAppDialog(
-          context: context,
-          child: BlocProvider<PhotoboothBloc>.value(
-              value: photoboothBloc, child: const ImagePickerView()));
-      // context.router.push(PickerRoute(
-      //     images: photoboothBloc.state.images
-      //         .map((m) => ImagePath.from(m))
-      //         .followedBy(photoboothBloc.state.aiImage)
-      //         .toList()));
-      //await cameraService.disposeController();
-    }
-
-    unawaited(navToPusher());
-//    unawaited(context.router.replace(const StickersRoute()));
+    await showFullDialog(
+        context: context,
+        child: BlocProvider<PhotoboothBloc>.value(
+            value: photoboothBloc, child: const ImagePickerView()));
+    photoboothBloc.add(const PhotoClearAllTapped());
+    setState(() {});
   }
+
+//    unawaited(context.router.replace(const StickersRoute()));
 
   Future<void> _onTakePhoto() async {
     final cameraService = context.read<CameraService>();
@@ -206,13 +200,15 @@ class _PhotoboothViewState extends State<PhotoboothView>
             child: PhotoboothBackgroundStack(
               child: Camera(
                 placeholder: (_) => const ColoredBox(color: Colors.black),
-                preview: (context, preview) => PhotoboothPreview(
+                preview: (context, preview) {
+                  return PhotoboothPreview(
                     preview: preview,
                     onTakePhoto: _onTakePhoto,
                     onFlipPressed: _onFlipPressed,
                     onPhotosComplete: _onPhotosComplete,
-//              onShutterPressed: _onShutterPressed,
-                    seed: seed),
+                      //              onShutterPressed: _onShutterPressed,
+                      seed: seed);
+                },
                 error: (context, error) => PhotoboothError(error: error),
               ),
             ))

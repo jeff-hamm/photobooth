@@ -16,7 +16,7 @@ class AppTheme {
   static const EdgeInsets textBoxPadding = EdgeInsets.all(10);
 
 
-  static const double highResLargeTextSize = 44;
+  static const double highResLargeTextSize = 55;
   static const double highResMediumTextSize = 35;
   static const double highResSmallTextSize = 30;
 

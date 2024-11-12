@@ -1,10 +1,10 @@
 {
     "@@locale": "en",
-    "landingPageHeading": "Welcome to Protobooth - Mystical Forest!",
+    "landingPageHeading": "Welcome to Emotional Salvage Photo Alchemy Machine",
     "@landingPageHeading": {
         "description": "Heading shown on the landing page."
     },
-    "landingPageSubheading": "Take a photo in the photo-proto-booth! Click 'Allow' to take a photo!",
+    "landingPageSubheading": "Stream photos from the Emotional SPAM machine! Click 'Allow' to take a photo!",
     "@landingPageSubheading": {
         "description": "Subheading shown on the landing page."
     },

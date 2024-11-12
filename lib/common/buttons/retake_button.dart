@@ -15,6 +15,16 @@ import 'package:auto_route/auto_route.dart';
 import '../../../config.dart' as config;
 import '../../app/app.dart';
 
+class RefreshButton extends StatefulWidget {
+  const RefreshButton(
+      {this.onCountdownComplete, super.key, this.isStickers = false});
+  final bool isStickers;
+  final VoidCallback? onCountdownComplete;
+
+  @override
+  State<RetakeButton> createState() => _RetakeButtonState();
+}
+
 class RetakeButton extends StatefulWidget {
   const RetakeButton(
       {this.onCountdownComplete, super.key, this.isStickers = false});

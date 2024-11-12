@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:flame/flame.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -17,6 +18,7 @@ import 'package:io_photobooth/landing/loading_indicator_io.dart'
     if (dart.library.html) 'landing/loading_indicator_web.dart';
 import 'package:logger/logger.dart' show Level, LogEvent;
 import 'package:logger_screen/logger_screen.dart';
+import 'package:restart_app/restart_app.dart';
 
 import 'common/butts_repository.dart';
 
@@ -67,6 +69,14 @@ void main() async {
         // print(details.stack);
         FlutterError.presentError(details);
         errorHandler.onError(details);
+        Restart.restartApp(
+          /// In Web Platform, Fill webOrigin only when your new origin is different than the app's origin
+          // webOrigin: 'http://example.com',
+
+          // Customizing the restart notification message (only needed on iOS)
+          notificationTitle: 'Restarting App',
+          notificationBody: 'Please tap here to open the app again.',
+        );
       };
       PlatformDispatcher.instance.onError = (error, stackTrace) {
         errorHandler.onErrorStack(error, stackTrace);

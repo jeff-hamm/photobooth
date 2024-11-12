@@ -70,6 +70,7 @@ class PhotoboothTheme {
   static const double standardIconSize = 45;
   static const double _mediumIconSize = 35;
   static const double _smallIconSize = 25;
+  static const double iconButtonSizeDelta = 30;
 
   static IconButtonThemeData _iconButtonTheme(double iconSize) {
     return IconButtonThemeData( style: ButtonStyle(
@@ -77,7 +78,7 @@ class PhotoboothTheme {
 //        backgroundColor: const WidgetStatePropertyAll(PhotoboothColors.white),
         iconColor: const WidgetStatePropertyAll(PhotoboothColors.primary),
         padding: const WidgetStatePropertyAll(EdgeInsets.all(10)),
-        iconSize: WidgetStatePropertyAll(iconSize + 30),  
+      iconSize: WidgetStatePropertyAll(iconSize + iconButtonSizeDelta),  
 //        fixedSize: WidgetStatePropertyAll(Size(iconSize + 40,iconSize + 80)),
         // maximumSize: const WidgetStatePropertyAll(Size(200,200)),
         // iconSize: WidgetStatePropertyAll(iconSize)

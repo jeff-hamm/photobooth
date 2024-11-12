@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:io_photobooth/common/widgets.dart';
 
 import '../../config.dart' as config;
+AudioPlayer _getAudioPlayer() => AudioPlayer();
 
 class ShutterButton extends StatefulWidget {
   const ShutterButton({
@@ -16,12 +17,12 @@ class ShutterButton extends StatefulWidget {
     this.photosPerPress = 1,
     super.key,
     ValueGetter<AudioPlayer>? audioPlayer,
-  });
+  }) : _audioPlayer = audioPlayer ?? _getAudioPlayer;
   final int photosPerPress;
   final VoidCallback? onPressed;
   final Future<void> Function() onCountdownComplete;
   final VoidCallback onAllPhotosComplete;
-
+  final ValueGetter<AudioPlayer> _audioPlayer;
   @override
   State<ShutterButton> createState() => _ShutterButtonState();
 }
@@ -29,7 +30,7 @@ class ShutterButton extends StatefulWidget {
 class _ShutterButtonState extends State<ShutterButton>
     with TickerProviderStateMixin {
   late final AnimationController controller;
-
+  late final AudioPlayer audioPlayer;
   Future<void> _onAnimationStatusChanged(AnimationStatus status) async {
     if (status == AnimationStatus.dismissed) {
       await widget.onCountdownComplete();
@@ -39,8 +40,10 @@ class _ShutterButtonState extends State<ShutterButton>
         unawaited(controller.reverse(from: 1));
       } else {
         widget.onAllPhotosComplete();
+        photoCount = 0;
       }
     }
+
   }
 
   int photoCount = 0;
@@ -48,10 +51,17 @@ class _ShutterButtonState extends State<ShutterButton>
   void initState() {
     super.initState();
     photoCount = 0;
+    audioPlayer = widget._audioPlayer()..setAsset('assets/audio/camera.mp3');
     controller = AnimationController(
       vsync: this,
       duration: config.CountdownDuration,
     )..addStatusListener(_onAnimationStatusChanged);
+    unawaited(audioPlayer.play());
+    audioPlayer.playerStateStream.listen((event) {
+      if (event.processingState == ProcessingState.ready) {
+        audioPlayer.pause();
+      }
+    });
   }
 
   @override
@@ -59,11 +69,14 @@ class _ShutterButtonState extends State<ShutterButton>
     controller
       ..removeStatusListener(_onAnimationStatusChanged)
       ..dispose();
+    audioPlayer.dispose();
     super.dispose();
   }
 
   Future<void> _onShutterPressed() async {
     photoCount = 0;
+    await audioPlayer.seek(null);
+    unawaited(audioPlayer.play());
     widget.onPressed?.call();
     unawaited(controller.reverse(from: 1));
   }
@@ -86,15 +99,25 @@ class CountdownTimer extends StatelessWidget {
 
   final AnimationController controller;
 
+  Size? toSize(WidgetStateProperty<double?>? iconSize) {
+    final size = iconSize?.resolve({});
+    if (size == null) {
+      return null;
+    }
+    return Size(size, size);
+  }
   @override
   Widget build(BuildContext context) {
     final seconds =
         (config.CountdownDuration.inSeconds * controller.value).ceil();
     final theme = Theme.of(context);
+    final iconSize = (theme.iconButtonTheme.style?.fixedSize?.resolve({}) ??
+        toSize(theme.iconButtonTheme.style?.iconSize) ??
+        Size(theme.iconTheme!.size!, theme.iconTheme!.size!))!;
 
     return Container(
-      height: PhotoboothTheme.standardIconSize + AppTheme.assetIconPadding,
-      width: PhotoboothTheme.standardIconSize + AppTheme.assetIconPadding,
+      height: iconSize.height + AppTheme.assetIconPadding + 80,
+      width: iconSize.width + AppTheme.assetIconPadding + 80,
       margin: const EdgeInsets.only(bottom: 15, top: 15),
       child: Stack(
         alignment: Alignment.center,
@@ -104,8 +127,9 @@ class CountdownTimer extends StatelessWidget {
             child: Text(
               '$seconds',
               style: theme.textTheme.displayLarge?.copyWith(
-                color: PhotoboothColors.white,
+                  color: PhotoboothColors.primary,
                 fontWeight: FontWeight.w500,
+                  fontSize: 80
               ),
             ),
           ),
@@ -130,7 +154,7 @@ class TimerPainter extends CustomPainter {
   final int countdown;
   @visibleForTesting
   Color calculateColor() {
-    if (countdown == 3) return PhotoboothColors.accent;
+    if (countdown > 3) return PhotoboothColors.primary;
     if (countdown == 2) return PhotoboothColors.orange;
     return PhotoboothColors.green;
   }

@@ -80,6 +80,7 @@ class PhotoboothPreview extends StatelessWidget {
                                 },
                               ),
                             ),
+                            if (config.EnableCharacters)
                             for (final character in state.characters)
                               DraggableResizable(
                                   key: Key(
@@ -103,13 +104,14 @@ class PhotoboothPreview extends StatelessWidget {
                                   size: _getAnimatedSpriteSize(character.asset),
                                   child: _AnimatedCharacter(
                                       asset: character.asset)),
-                            const DraggableStickers(),
+                            if (config.EnableStickers)
+                              const DraggableStickers(),
                             const PhotoApertureOverlay()
                           ])
                           //)
                           ,
                           Align(
-                              alignment: Alignment.bottomCenter,
+                              alignment: Alignment.center,
                               child: ShutterButtonFooter(
                                   onTakePhoto: onTakePhoto,
                                   onAllPhotosComplete: onPhotosComplete,
@@ -118,10 +120,12 @@ class PhotoboothPreview extends StatelessWidget {
                                   onFlipPressed: onFlipPressed)),
                           ActionsRow(
                               retakeButton: false,
+                              refreshButton: true,
                               showLogsButton: bloc.isDebugClient),
                         ],
                       )),
-                  CharactersIconLayout(children: children),
+                  if (config.EnableCharacters)
+                    CharactersIconLayout(children: children),
                 ]));
   }
 

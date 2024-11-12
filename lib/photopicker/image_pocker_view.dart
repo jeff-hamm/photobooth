@@ -150,11 +150,25 @@ class ShipItRow extends StatelessWidget {
 
   final ImagePickerController controller;
 
+  void onButtonPressed(BuildContext context) {
+    final booth = context.read<PhotoboothBloc>();
+    var toShip = controller.imageFiles
+        .where((i) => i.isSelected)
+        .map((i) => i.image)
+        .toList();
+    if (toShip.isEmpty) {
+      toShip = controller.imageFiles.map((i) => i.image).toList();
+    }
+    booth.add(UploadImages(toShip));
+  }
+
   @override
   Widget build(BuildContext context) {
     final booth = context.watch<PhotoboothBloc>();
     final theme = Theme.of(context);
-    return Padding(
+    return InkWell(
+        onTap: () => onButtonPressed(context),
+        child: Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -181,7 +195,7 @@ class ShipItRow extends StatelessWidget {
                       controller: controller,
                     ),
                   ])
-            ]));
+                ])));
   }
 }
 
@@ -193,18 +207,6 @@ class ShipItButton extends StatelessWidget {
   final ImagePickerController controller;
   final String icon;
 
-  void onButtonPressed(BuildContext context) {
-    final booth = context.read<PhotoboothBloc>();
-    var toShip = controller.imageFiles
-        .where((i) => i.isSelected)
-        .map((i) => i.image)
-        .toList();
-    if (toShip.isEmpty) {
-      toShip = controller.imageFiles.map((i) => i.image).toList();
-    }
-    booth.add(UploadImages(toShip));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Semantics(
@@ -214,11 +216,8 @@ class ShipItButton extends StatelessWidget {
       child: Material(
           clipBehavior: Clip.hardEdge,
           shape: const CircleBorder(),
-          color: PhotoboothColors.transparent,
-          child: InkWell(
-            onTap: () => onButtonPressed(context),
-            child: IconAssetColorSwitcher(this.icon),
-          )
+        color: PhotoboothColors.transparent,
+        child: IconAssetColorSwitcher(this.icon),
           // Image.asset(
           //   this.icon,
           //   height: 100,
@@ -259,10 +258,10 @@ class RotatingShipIteButton extends StatelessWidget {
       if (state.imageUploadStatus.isFailure) {
 //            final navigator = Navigator.of(context);
 
-        await showAppDialog<void>(
-          child: const ErrorDialog(),
-          context: context,
-        );
+        // await showAppDialog<void>(
+        //   child: const ErrorDialog(),
+        //   context: context,
+        // );
         photoboothBloc.add(const PhotoClearAllTapped());
         Navigator.of(context).pop();
         // navigator.maybePop();

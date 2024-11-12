@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:image_compositor/image_compositor.dart';
+import 'package:io_photobooth/common/butts_repository.dart';
 import 'package:io_photobooth/common/models/ImagePath.dart';
 import '../config.dart' as config;
 /// {@template upload_photo_exception}
@@ -128,6 +129,7 @@ abstract class PhotosRepository<TReference> {
     required String fileName,
     required Uint8List data,
     required String shareText,
+    ImageType? imageType,
   }) async {
     final reference = getFileReference(fileName);
 
@@ -138,7 +140,7 @@ abstract class PhotosRepository<TReference> {
         twitterShareUrl: _twitterShareUrl(reference, shareText),
       );
     }
-    final r2 = await uploadPhoto(imageId, reference, data);
+    final r2 = await uploadPhoto(imageId, reference, data, imageType);
 
     return ShareUrls(
       explicitShareUrl: getSharePhotoUrl(r2),
@@ -186,7 +188,8 @@ abstract class PhotosRepository<TReference> {
   Future<bool> photoExists(TReference reference);
 
   Future<TReference> uploadPhoto(
-      String imageId, TReference reference, Uint8List data);
+      String imageId, TReference reference,
+      Uint8List data, ImageType? imageType);
   String _twitterShareUrl(TReference ref, String shareText) {
     final encodedShareText = Uri.encodeComponent(shareText);
     return 'https://twitter.com/intent/tweet?url=${getSharePhotoUrl(ref)}&text=';

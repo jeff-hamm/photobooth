@@ -9,7 +9,28 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": ["-d", "chrome", "--web-renderer", "html", "--web-browser-flag","--use-fake-device-for-media-stream","--web-browser-flag", "--use-file-for-fake-video-capture=C:/users/Jumper/Downloads/sample.mjpeg"]
+      "args": [
+        "-d",
+        "chrome",
+        "--web-renderer",
+        "html"
+      ]
+    },
+    {
+      "name": "Launch Photobooth (Fake webcam)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--web-browser-flag",
+        "--use-fake-device-for-media-stream",
+        "--web-browser-flag",
+        "--use-file-for-fake-video-capture=C:/users/Jumper/Downloads/sample.mjpeg"
+      ]
     }
   ]
 }

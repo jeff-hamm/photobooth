@@ -8,7 +8,7 @@ import 'package:io_photobooth/common/models/ImagePath.dart';
 import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 //import 'package:io_photobooth/common/gradio.dart';
-import 'package:io_photobooth/common/serverless.dart';
+import 'package:io_photobooth/common/services/serverless.dart';
 import 'package:io_photobooth/common/widgets.dart';
 import './photos_repository.dart';
 import 'package:http_parser/http_parser.dart';
@@ -40,8 +40,13 @@ class ButtsPhotosRepository extends PhotosRepository<ImagePath> {
       return false;
   }
   
-  Future<ImagePath> uploadPhoto(String imageId, ImagePath fileName, Uint8List data) async {
-    final path = await _uploadPhotoInternal(fileName,imageType: config.DefaultImageType, data, imageId: imageId);
+  Future<ImagePath> uploadPhoto(String imageId, ImagePath fileName,
+      Uint8List data, ImageType? imageType) async {
+    final path = await _uploadPhotoInternal(
+        fileName,
+        imageType: imageType ?? config.DefaultImageType,
+        data,
+        imageId: imageId);
     return path;
   }
 

@@ -31,7 +31,8 @@ class ShutterButtonFooter extends StatelessWidget {
         return Padding(
             padding: const EdgeInsets.only(bottom: 30),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+              
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if(config.PhotosPerPress > 1)
@@ -49,7 +50,7 @@ class ShutterButtonFooter extends StatelessWidget {
                     return 
                     AppTextBox(state.images.length == 0 && !state.isInPhotoStream
                               ? "Tap to take ${config.PhotosPerPress} photos!"
-                              : "${remaining} photo${suffix} remaining!",
+                              : "${remaining} remaining!",
                               textStyleName: TextStyleName.displayLarge,
                               fontWeight: FontWeight.bold
                               ,);
@@ -73,8 +74,8 @@ class ShutterButtonFooter extends StatelessWidget {
         },
         photosPerPress: photosPerPress,
       ),
-      if(!state.isInPhotoStream && service.canFlip())
-        CameraButton(onPressed: onFlipPressed,icon: 'assets/icons/retake_button_icon.png',)
+                    // if(!state.isInPhotoStream && service.canFlip())
+                    //   CameraButton(onPressed: onFlipPressed,icon: 'assets/icons/retake_button_icon.png',)
     ])
     ])
     );
